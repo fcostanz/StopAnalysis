@@ -6,9 +6,6 @@
 #include <iostream>
 #include <iomanip>
 
-typedef ROOT::Math::LorentzVector<ROOT::Math::PtEtaPhiE4D<double> >          LorentzED;
-using namespace ROOT::Math::VectorUtil;
-
 bool pcp = true;
 
 int MakeTree( int iSample = 0){
@@ -16,7 +13,7 @@ int MakeTree( int iSample = 0){
   TH1::SetDefaultSumw2(true);
   if(pcp)cout<<"going to set inputs"<<endl;
     
-  TString mainDir = "/nfs/dust/cms/user/fcost/store/Bonsai/KinVariables/";
+  TString mainDir = "/home/fcostanz/Bonsai/Optimization/";
 
   const int NSamples = 11;  
   TString sample[NSamples];
@@ -32,32 +29,35 @@ int MakeTree( int iSample = 0){
   sample[9] = "T2tb-mStop450mLSP150";
   sample[10] = "T2tb-mStop550mLSP1";
   
-  const int NMtCut = 4;
+  const int NMtCut = 3;
   const int NNjetCut = 2;
-  const int NTopnessCut = 4;
-  const int NMt2wCut = 3;
+  const int NTopnessCut = 3;
+  const int NMt2wCut = 4;
   const int NYCut = 4;
   const int NDphiCut = 3;
   const int NDrlblCut = 3;
   const int NDrlbgCut = 3;
   const int NChiCut = 3;
-  const int NMetCut = 4;
-  const int NSR = NMtCut * NNjetCut * NTopnessCut * NMt2wCut * NYCut * NDphiCut * NDrlblCut * NDrlbgCut * NMetCut;
+  const int NMetCut = 3;
+  const int NSR = NMtCut * NNjetCut * NTopnessCut * NMt2wCut * NYCut * NDphiCut * NDrlblCut * NDrlbgCut * NChiCut * NMetCut;
 
-  Float_t MtCut[NMtCut]           = {100., 120., 150., 250.};
-  Float_t NjetCut[NNjetCut]       = { 3., 4.};
-  Float_t TopnessCut[NTopnessCut] = {-15., 3., 5., 8.};
-  Float_t Mt2wCut[NMt2wCut]       = {0., 200., 250.};
-  Float_t YCut[NYCut]             = {0., 8., 10., 13.};
-  Float_t DphiCut[NDphiCut]       = {0., 0.8, 1.};
-  Float_t DrlblCut[NDrlblCut]     = {5., 2., 1.5};
-  Float_t DrlbgCut[NDrlbgCut]     = {0., 1.5, 2.};
-  Float_t ChiCut[NDrlbgCut]       = {9999999., 5., 3.};
-  Float_t MetCut[NMetCut]         = {0., 150., 200., 350.};
+  Double_t MtCut[NMtCut]           = {100., 120., 200.};
+  Double_t NjetCut[NNjetCut]       = { 3., 4.};
+  Double_t TopnessCut[NTopnessCut] = {-15., 5., 8.};
+  Double_t Mt2wCut[NMt2wCut]       = {0., 200., 250., 300.};
+  Double_t YCut[NYCut]             = {0., 8., 10., 13.};
+  Double_t DphiCut[NDphiCut]       = {0., 0.8, 1.};
+  Double_t DrlblCut[NDrlblCut]     = {5., 2., 1.5};
+  Double_t DrlbgCut[NDrlbgCut]     = {0., 1.5, 2.};
+  Double_t ChiCut[NChiCut]         = {999999999., 5., 3.};
+  Double_t MetCut[NMetCut]         = {150., 250., 350.};
 
-  Float_t nEvents[NMtCut][NNjetCut][NTopnessCut][NMt2wCut][NYCut][NDphiCut][NDrlblCut][NDrlbgCut][NMetCut] = {};
-  Float_t nEvents2[NMtCut][NNjetCut][NTopnessCut][NMt2wCut][NYCut][NDphiCut][NDrlblCut][NDrlbgCut][NMetCut] = {};
-
+  Float_t tt[NMtCut][NNjetCut][NTopnessCut][NMt2wCut][NYCut][NDphiCut][NDrlblCut][NDrlbgCut][NChiCut][NMetCut] = {};
+  Float_t tb[NMtCut][NNjetCut][NTopnessCut][NMt2wCut][NYCut][NDphiCut][NDrlblCut][NDrlbgCut][NChiCut][NMetCut] = {};
+  Float_t bb[NMtCut][NNjetCut][NTopnessCut][NMt2wCut][NYCut][NDphiCut][NDrlblCut][NDrlbgCut][NChiCut][NMetCut] = {};
+  Float_t tt2[NMtCut][NNjetCut][NTopnessCut][NMt2wCut][NYCut][NDphiCut][NDrlblCut][NDrlbgCut][NChiCut][NMetCut] = {};
+  Float_t tb2[NMtCut][NNjetCut][NTopnessCut][NMt2wCut][NYCut][NDphiCut][NDrlblCut][NDrlbgCut][NChiCut][NMetCut] = {};
+  Float_t bb2[NMtCut][NNjetCut][NTopnessCut][NMt2wCut][NYCut][NDphiCut][NDrlblCut][NDrlbgCut][NChiCut][NMetCut] = {};
   
   for ( int imt = 0; imt < NMtCut ; imt++){
     for ( int ijet = 0; ijet < NNjetCut ; ijet++){
@@ -67,13 +67,16 @@ int MakeTree( int iSample = 0){
 	    for ( int idphi = 0; idphi < NDphiCut ; idphi++){
 	      for ( int idrlbl = 0; idrlbl < NDrlblCut ; idrlbl++){
 		for ( int idrlbg = 0; idrlbg < NDrlbgCut ; idrlbg++){
-		  //for ( int ichi = 0; ichi < NChiCut ; ichi++){
+		  for ( int ichi = 0; ichi < NChiCut ; ichi++){
 		    for ( int imet = 0; imet < NMetCut ; imet++){	     
-		      nEvents[imt][ijet][itopness][imt2w][iy][idphi][idrlbl][idrlbg][imet] = 0.;
-		      nEvents2[imt][ijet][itopness][imt2w][iy][idphi][idrlbl][idrlbg][imet] = 0.;
-		      
+		      tt[imt][ijet][itopness][imt2w][iy][idphi][idrlbl][idrlbg][ichi][imet] = 0.;
+		      tb[imt][ijet][itopness][imt2w][iy][idphi][idrlbl][idrlbg][ichi][imet] = 0.;
+		      bb[imt][ijet][itopness][imt2w][iy][idphi][idrlbl][idrlbg][ichi][imet] = 0.;
+		      tt2[imt][ijet][itopness][imt2w][iy][idphi][idrlbl][idrlbg][ichi][imet] = 0.;
+		      tb2[imt][ijet][itopness][imt2w][iy][idphi][idrlbl][idrlbg][ichi][imet] = 0.;
+		      bb2[imt][ijet][itopness][imt2w][iy][idphi][idrlbl][idrlbg][ichi][imet] = 0.;
 		    }
-		    //}
+		  }
 		}
 	      }
 	    }
@@ -92,9 +95,10 @@ int MakeTree( int iSample = 0){
   ///////////////////////////////////////////////////// 
 
   Float_t globalWeight = 0.;
-  
-  Float_t xs = 0.;
-  Float_t Ntries = 0.;
+  Float_t triggerWeight = 0.;
+  Float_t puWeight = 0.;
+  Float_t isrWeight = 0.;
+  Float_t topPtWeight = 0.;
 
   Float_t lepFromTop = 0.;
   Float_t charginos = 0.;
@@ -138,12 +142,12 @@ int MakeTree( int iSample = 0){
   Float_t drlbmin = 0.;
 
   Int_t pdgIdLep1 = 0;
-  Char_t kinRegion = false;
+  Char_t kinRegionFlag = false;
+  Char_t searchRegionFlag = false;
 
   /////////////////////////////////////////////////////
   //  Input Definition
   /////////////////////////////////////////////////////  
-  cout<<"here0b"<<endl;
   TString inFileName = mainDir; inFileName += sample[iSample]; inFileName +=".root";
   cout<<inFileName<<endl;
 
@@ -159,8 +163,10 @@ int MakeTree( int iSample = 0){
   int N = tree->GetEntries();  cout<<"THERE ARE "<<N<<" EVENTS IN "<<inFileName<<endl;
     
   tree->SetBranchAddress( "GlobalWeight", &globalWeight);
-  tree->SetBranchAddress( "NEvents", &Ntries);
-  tree->SetBranchAddress( "xs", &xs);
+  tree->SetBranchAddress( "TriggerWeight", &triggerWeight);
+  tree->SetBranchAddress( "PUWeight", &puWeight);
+  tree->SetBranchAddress( "isrWeight", &isrWeight);
+  tree->SetBranchAddress( "topPtWeight", &topPtWeight);
 
   tree->SetBranchAddress( "LepFromTop", &lepFromTop);
   tree->SetBranchAddress( "Charginos", &charginos);
@@ -199,7 +205,8 @@ int MakeTree( int iSample = 0){
   tree->SetBranchAddress( "drlbmin", &drlbmin);
 
   tree->SetBranchAddress("pdgIdLep1",&pdgIdLep1);
-  tree->SetBranchAddress("kinRegion",&kinRegion);
+  tree->SetBranchAddress("kinRegion",&kinRegionFlag);
+  tree->SetBranchAddress("searchRegionPost",&searchRegionFlag);
 
 
   /////////////////////////////////////////////////////
@@ -227,8 +234,12 @@ int MakeTree( int iSample = 0){
 
   TString SR0("");
 
-  Float_t nEvents0 = 0.;
-  Float_t nEvents20 = 0.;
+  Float_t tt0 = 0.;
+  Float_t tb0 = 0.;
+  Float_t bb0 = 0.;
+  Float_t tt20 = 0.;
+  Float_t tb20 = 0.;
+  Float_t bb20 = 0.;
 
   outTree->Branch("mtCut", &MtCut0, "mtCut/F");
   outTree->Branch("njetCut", &NjetCut0, "njetCut/F");
@@ -242,16 +253,16 @@ int MakeTree( int iSample = 0){
   outTree->Branch("metCut", &MetCut0, "metCut/F");
   outTree->Branch("sr", "TString", &SR0);
   
-  outTree->Branch("nEvents", &nEvents0, "nEvents/F");
-  outTree->Branch("nEvents2", &nEvents20, "nEvents2/F");
-
+  outTree->Branch("tt", &tt0, "tt/F");
+  outTree->Branch("tb", &tb0, "tb/F");
+  outTree->Branch("bb", &bb0, "bb/F");
+  outTree->Branch("tt2", &tt20, "tt2/F");
+  outTree->Branch("tb2", &tb20, "tb2/F");
+  outTree->Branch("bb2", &bb20, "bb2/F");
 
   /////////////////////////////////////////////////////
   //  Event Loop
   ///////////////////////////////////////////////////// 
-
-  cout<<"here1"<<endl;
-
   for (int ievt=0;ievt<N;++ievt){
     if (ievt%13454 == 0) {
       cout<<"Event number "<<ievt<<"\r"<<flush;
@@ -259,13 +270,12 @@ int MakeTree( int iSample = 0){
     
     tree->GetEntry(ievt);
 
-    weight = globalWeight * lumi;
-    if ( iSample == 8)
-      weight /= 10.;
-
-    cout<<weight<<" "<<xs<<" "<<Ntries<<endl;
-
-    if (!kinRegion) continue;    
+    weight = globalWeight * triggerWeight * puWeight * lumi;
+    if (iSample < 2) weight *= topPtWeight;
+    if (iSample > 3 ) weight *= isrWeight;
+    
+    if (lRelIso > 0.1) continue;
+    if (!searchRegionFlag) continue;
 
     for ( int imt = 0; imt < NMtCut ; imt++){
       if (mt < MtCut[imt]) continue;
@@ -291,16 +301,26 @@ int MakeTree( int iSample = 0){
 		  for ( int idrlbg = 0; idrlbg < NDrlbgCut ; idrlbg++){
 		    if (drlb1 < DrlbgCut[idrlbg]) continue;
 		    
-		    //for ( int ichi = 0; ichi < NChiCut ; ichi++){
-		    //if (hadChi2 > ChiCut[ichi]) continue;
-
+		    for ( int ichi = 0; ichi < NChiCut ; ichi++){
+		      if (hadChi2 > ChiCut[ichi]) continue;
+		      
 		      for ( int imet = 0; imet < NMetCut ; imet++){	     
 			if (phiCorrMet < MetCut[imet]) continue;
-		  
-			nEvents[imt][ijet][itopness][imt2w][iy][idphi][idrlbl][idrlbg][imet] += weight;
-			nEvents2[imt][ijet][itopness][imt2w][iy][idphi][idrlbl][idrlbg][imet] += weight * weight;
+			
+			if (charginos == 0){
+			  tt[imt][ijet][itopness][imt2w][iy][idphi][idrlbl][idrlbg][ichi][imet] += weight;
+			  tt2[imt][ijet][itopness][imt2w][iy][idphi][idrlbl][idrlbg][ichi][imet] += weight * weight;
+			}
+			if (charginos == 1){
+			  tb[imt][ijet][itopness][imt2w][iy][idphi][idrlbl][idrlbg][ichi][imet] += weight;
+			  tb2[imt][ijet][itopness][imt2w][iy][idphi][idrlbl][idrlbg][ichi][imet] += weight * weight;
+			}
+			if (charginos == 2){
+			  bb[imt][ijet][itopness][imt2w][iy][idphi][idrlbl][idrlbg][ichi][imet] += weight;
+			  bb2[imt][ijet][itopness][imt2w][iy][idphi][idrlbl][idrlbg][ichi][imet] += weight * weight;
+			}
 		      }
-		      //}
+		    }
 		  }
 		}
 	      }
@@ -311,50 +331,6 @@ int MakeTree( int iSample = 0){
     }
   }
 
-  cout<<nEvents[0][0][0][1][3][2][0][2][2]<<" "<<nEvents[0][1][0][1][3][2][0][2][2]<<endl;
-
-  /////////////////////////////////////////////////////
-  //  WriteHisto
-  /////////////////////////////////////////////////////
-  
-  /*  baseDir->cd();
-
-  lpth->Write();
-  letah->Write();
-  lRelIsoh->Write();
-  
-  njetsh->Write();
-  jet1h->Write();
-  jet2h->Write();
-  jet3h->Write();
-  jet4h->Write();
-    
-  nbjetsh->Write();
-  bjet1h->Write();
-  bjetHighDh->Write();
-  
-  meth->Write();
-  
-  hth->Write();
-  htRatioh->Write();
-  meffh->Write();
-  yh->Write();
-  
-  mth->Write();
-  mlb1h->Write();
-  mlbh->Write();
-  m3bh->Write();
-  mt2wh->Write();
-  hadChi2h->Write();
-  topnessh->Write();
-  
-  dphiminh->Write();
-  drlb1h->Write();
-  drlbminh->Write();
-  */
-
-  Int_t count = 0.;
-
   for ( int imt = 0; imt < NMtCut ; imt++){
     for ( int ijet = 0; ijet < NNjetCut ; ijet++){
       for ( int itopness = 0; itopness < NTopnessCut ; itopness++){
@@ -363,7 +339,7 @@ int MakeTree( int iSample = 0){
 	    for ( int idphi = 0; idphi < NDphiCut ; idphi++){
 	      for ( int idrlbl = 0; idrlbl < NDrlblCut ; idrlbl++){
 		for ( int idrlbg = 0; idrlbg < NDrlbgCut ; idrlbg++){
-		  //for ( int ichi = 0; ichi < NChiCut ; ichi++){
+		  for ( int ichi = 0; ichi < NChiCut ; ichi++){
 		    for ( int imet = 0; imet < NMetCut ; imet++){	     
 		      
 		      MtCut0 = MtCut[imt];
@@ -374,7 +350,7 @@ int MakeTree( int iSample = 0){
 		      DphiCut0 =  DphiCut[idphi];
 		      DrlblCut0 =  DrlblCut[idrlbl];
 		      DrlbgCut0 =  DrlbgCut[idrlbg];
-		      //ChiCut0 =  ChiCut[ichi];
+		      ChiCut0 =  ChiCut[ichi];
 		      MetCut0 = MetCut[imet];
 		      
 		      
@@ -386,19 +362,21 @@ int MakeTree( int iSample = 0){
 		      tmp += "Dphi-"; tmp += DphiCut[idphi]; tmp += "_";
 		      tmp += "Drlbl-"; tmp += DrlblCut[idrlbl]; tmp += "_";
 		      tmp += "Drlbg-"; tmp += DrlbgCut[idrlbg]; tmp += "_";
-		      //tmp += "Chi-"; tmp += ChiCut[ichi]; tmp += "_";
+		      tmp += "Chi-"; tmp += ChiCut[ichi]; tmp += "_";
 		      tmp += "Met-"; tmp += MetCut[imet];
 		      
 		      SR0 = tmp;
 		      
-		      nEvents0 = nEvents[imt][ijet][itopness][imt2w][iy][idphi][idrlbl][idrlbg][imet];
-		      nEvents20 = nEvents2[imt][ijet][itopness][imt2w][iy][idphi][idrlbl][idrlbg][imet];
-		      
-		      if ( nEvents0 < 3.) count++;
+		      tt0 = tt[imt][ijet][itopness][imt2w][iy][idphi][idrlbl][idrlbg][ichi][imet];
+		      tb0 = tb[imt][ijet][itopness][imt2w][iy][idphi][idrlbl][idrlbg][ichi][imet];
+		      bb0 = bb[imt][ijet][itopness][imt2w][iy][idphi][idrlbl][idrlbg][ichi][imet];
+		      tt20 = tt2[imt][ijet][itopness][imt2w][iy][idphi][idrlbl][idrlbg][ichi][imet];
+		      tb20 = tb2[imt][ijet][itopness][imt2w][iy][idphi][idrlbl][idrlbg][ichi][imet];
+		      bb20 = bb2[imt][ijet][itopness][imt2w][iy][idphi][idrlbl][idrlbg][ichi][imet];
 		      
 		      outTree->Fill();
 		    }
-		    //}
+		  }
 		}
 	      }
 	    }
@@ -407,13 +385,12 @@ int MakeTree( int iSample = 0){
       }
     }
   }
-  cout<<endl;
-  cout<<count<<endl;
-
 
   outFile->cd();
   outTree->Write();
 
   outFile->Close();    
   inFile->Close();
+  
+  return 0;
 }
