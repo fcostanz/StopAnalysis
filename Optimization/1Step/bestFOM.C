@@ -2,7 +2,7 @@
 #include "TTree.h"
 #include "TFile.h"
 #include "TMath.h"
-//#include "../src/TriggerEfficiencyProvider.cpp"
+
 #include <iostream>
 #include <iomanip>
 #include <vector>
@@ -106,15 +106,15 @@ public:
 
   Float_t sig() const {
     Float_t a = 4. * BR * BR;
-    Float_t b = 4. * BR * (1 - BR);
-    Float_t c = 4. * (1 - BR) * (1 - BR);
+    Float_t b = 4. * BR * (1. - BR);
+    Float_t c = 4. * (1. - BR) * (1. - BR);
 
     return (a * tt + b * tb + c * bb);
   }
   Float_t sigma2_sig() const {
     Float_t a = 4. * BR * BR;
-    Float_t b = 4. * BR * (1 - BR);
-    Float_t c = 4. * (1 - BR) * (1 - BR);
+    Float_t b = 4. * BR * (1. - BR);
+    Float_t c = 4. * (1. - BR) * (1. - BR);
     
     return (a * a * tt2 + b * b * tb2 + c * c * bb2);
   }
@@ -144,8 +144,8 @@ public:
   }
 
   void Print() const {
-    cout<<"OUT "<<Ntry<<" "<<name->Data()<<": "<<FOM()<<" +- " << sqrt( epsilon2_FOM() ) * FOM();
-    cout<<"; sig="<<sig()<<"; bkg="<<bkg_tot()<<"; 1Lep="<<bkg[1]/bkg_tot()*100<<"%; rare="<<bkg[3]/bkg_tot() * 100<<"%";
+    cout<<"OUT SRs.push_back("<<Ntry<<"); "<<name->Data()<<": "<<FOM()<<" +- " << sqrt( epsilon2_FOM() ) * FOM();
+    cout<<"; sig="<<sig()<<" +- "<<sqrt(sigma2_sig())<<"; bkg="<<bkg_tot()<<"; 1Lep="<<bkg[1]/bkg_tot()*100<<"%; rare="<<bkg[3]/bkg_tot() * 100<<"%";
     cout<<endl;
 
     return;
@@ -159,15 +159,11 @@ int bestFOM( int iSample = 0, Float_t BR = 0.50){
   TH1::SetDefaultSumw2(true);
   if(pcp)cout<<"going to set inputs"<<endl;
     
-  const int NSamples = 7;  
-  TString sample[NSamples];
-  sample[0] = "T2tb-mStop175mLSP50";
-  sample[1] = "T2tb-mStop200mLSP25";
-  sample[2] = "T2tb-mStop375mLSP50";
-  sample[3] = "T2tb-mStop250mLSP25";
-  sample[4] = "T2tb-mStop325mLSP100";
-  sample[5] = "T2tb-mStop450mLSP150";
-  sample[6] = "T2tb-mStop550mLSP1";
+  const int NSamples = 15;
+  
+  Float_t mStop0[NSamples] = { 150., 250., 325., 175., 250., 325., 375., 225., 300., 450., 550., 200., 400., 600., 650.};  
+  Float_t mLSP0[NSamples] =  {   1., 100., 175.,   1.,  75., 150.,  50.,   1., 100., 150.,  50.,   1., 200., 250.,   1.};
+  TString sample = "T2tb-mStop"; sample += mStop0[iSample]; sample += "mLSP"; sample += mLSP0[iSample];
 
   std::vector<SR> SRs;
   Int_t NSavedFOMs = 30;
@@ -176,13 +172,13 @@ int bestFOM( int iSample = 0, Float_t BR = 0.50){
   //  Input Definition
   /////////////////////////////////////////////////////  
 
-  TString signalFileName = "./"; signalFileName += sample[iSample]; signalFileName +="_optimization.root";
+  TString signalFileName = "./"; signalFileName += sample; signalFileName +="_optimization-1Step.root";
   TFile* inFile[5];
   inFile[0] = new TFile(signalFileName,"READ");
-  inFile[1] = new TFile(TString("DiLep") + "_optimization.root","READ");
-  inFile[2] = new TFile(TString("OneLep") + "_optimization.root","READ");
-  inFile[3] = new TFile(TString("WJets") + "_optimization.root","READ");
-  inFile[4] = new TFile(TString("Rare") + "_optimization.root","READ");
+  inFile[1] = new TFile(TString("DiLep") + "_optimization-1Step.root","READ");
+  inFile[2] = new TFile(TString("OneLep") + "_optimization-1Step.root","READ");
+  inFile[3] = new TFile(TString("WJets") + "_optimization-1Step.root","READ");
+  inFile[4] = new TFile(TString("Rare") + "_optimization-1Step.root","READ");
 
   SR* sr = new SR(BR);
 
@@ -190,13 +186,18 @@ int bestFOM( int iSample = 0, Float_t BR = 0.50){
   for( int i = 0; i < 5; i++)
     tree[i]= (TTree*)inFile[i]->Get("Optimization");
 
+  int count = 0;
+  cout<<"here "<<count<<endl; count++;
+
   Float_t mtCut = 0.;
   Float_t nJetCut = 0.;
   Float_t topnessCut = 0.;
   Float_t mt2wCut = 0.;
   Float_t yCut = 0.;
   Float_t dphiCut = 0.;
+  Float_t chi2Cut = 0.;
   Float_t drlblCut = 0.;
+
   Float_t drlbgCut = 0.;
   Float_t metCut = 0.;
 
@@ -209,20 +210,20 @@ int bestFOM( int iSample = 0, Float_t BR = 0.50){
   tree[0]->SetBranchAddress( "sr", &sr->name);
 
   tree[0]->SetBranchAddress( "mtCut", &mtCut);
-  tree[0]->SetBranchAddress( "njetCut", &nJetCut);
+  tree[0]->SetBranchAddress( "nJetCut", &nJetCut);
   tree[0]->SetBranchAddress( "topnessCut", &topnessCut);
   tree[0]->SetBranchAddress( "mt2wCut", &mt2wCut);
   tree[0]->SetBranchAddress( "yCut", &yCut);
   tree[0]->SetBranchAddress( "dphiCut", &dphiCut);
   tree[0]->SetBranchAddress( "drlblCut", &drlblCut);
   tree[0]->SetBranchAddress( "drlbgCut", &drlbgCut);
+  tree[0]->SetBranchAddress( "chi2Cut", &chi2Cut);
   tree[0]->SetBranchAddress( "metCut", &metCut);
 
   for (int ibkg = 0; ibkg < 4; ibkg++){
     tree[ibkg+1]->SetBranchAddress( "tt", &sr->bkg[ibkg]);
     tree[ibkg+1]->SetBranchAddress( "tt2", &sr->bkg2[ibkg]);
   }
-
   //===========================================
   if(pcp)cout<<"inputs set!"<<endl;
   int N = tree[0]->GetEntries();
@@ -236,17 +237,17 @@ int bestFOM( int iSample = 0, Float_t BR = 0.50){
  
     sr->Ntry = ievt;
     
-    if(sr->sig()<10.) continue;
+    if(sr->sig()<4.) continue;
     if(sqrt(sr->epsilon2_FOM() > 0.3)) continue;
-    if(sr->FOM() - sqrt(sr->epsilon2_FOM()) < 2.0) continue;
-    if(sr->bkg[1]/sr->bkg_tot() > .25) continue;
-    if(sr->bkg[3]/sr->bkg_tot() > .15) continue;
-
+    if(sr->FOM() - sqrt(sr->epsilon2_FOM()) < 1.) continue;
+    if(sr->bkg[1]/sr->bkg_tot() > 0.35) continue;
+    if(sr->bkg[3]/sr->bkg_tot() > 0.25) continue;
+    
+    
     if (SRs.size() < NSavedFOMs) SRs.push_back(*sr);
     else if ( sr->FOM() > SRs.at(9).FOM()) SRs.at(9) = *sr;
-
     sort(SRs.begin(), SRs.end(), sortByFOM);
-  }
+  }  
 
   tree[0]->GetEntry(SRs.at(0).Ntry);
 
@@ -258,10 +259,10 @@ int bestFOM( int iSample = 0, Float_t BR = 0.50){
   Float_t dphiCut0 = dphiCut;
   Float_t drlblCut0 = drlblCut;
   Float_t drlbgCut0 = drlbgCut;
+  Float_t chi2Cut0 = chi2Cut;
   Float_t metCut0 = metCut;
 
-  TString mainDir = "/home/fcostanz/Bonsai/Optimization/";
-  TString sigFileName = mainDir; sigFileName += sample[iSample]; sigFileName +=".root";
+  TString sigFileName = "./Signals/"; sigFileName += sample; sigFileName += ".root";
   
   TFile* sigFile = new TFile(sigFileName,"READ");
   if (!sigFile->IsOpen()){
@@ -276,7 +277,7 @@ int bestFOM( int iSample = 0, Float_t BR = 0.50){
   Float_t puWeight = 0.;
   Float_t isrWeight = 0.;
   Float_t topPtWeight = 0.;
-
+  
   Float_t charginos = 0.;
 
   Float_t mt = 0.;
@@ -288,6 +289,9 @@ int bestFOM( int iSample = 0, Float_t BR = 0.50){
   Float_t drlb1 = 0.;
   Float_t hadChi2 = 0.;
   Float_t phiCorrMet = 0.;
+
+  Float_t mStop = 0.;
+  Float_t mLSP = 0.;
 
   Float_t lRelIso = 0.;
   Char_t searchRegionFlag = false;
@@ -313,6 +317,9 @@ int bestFOM( int iSample = 0, Float_t BR = 0.50){
   sigTree->SetBranchAddress( "drlb1", &drlb1);
   sigTree->SetBranchAddress( "hadChi2", &hadChi2);
   sigTree->SetBranchAddress( "phiCorrMet", &phiCorrMet);
+
+  sigTree->SetBranchAddress("mStop",&mStop);
+  sigTree->SetBranchAddress("mLSP",&mLSP);
 
   sigTree->SetBranchAddress( "lRelIso", &lRelIso);
   sigTree->SetBranchAddress( "searchRegionPost",&searchRegionFlag);
@@ -342,6 +349,9 @@ int bestFOM( int iSample = 0, Float_t BR = 0.50){
       
       weight = globalWeight * triggerWeight * puWeight * isrWeight * lumi;
       
+      if ( fabs(mStop -  mStop0[iSample]) > 0.001) continue;
+      if ( fabs(mLSP -  mLSP0[iSample]) > 0.001) continue;
+      
       if (lRelIso > 0.1) continue;
       if (!searchRegionFlag) continue;
       
@@ -353,12 +363,12 @@ int bestFOM( int iSample = 0, Float_t BR = 0.50){
       if (dphimin < dphiCut) continue; 
       if (drlb1 > drlblCut) continue; 
       if (drlb1 < drlbgCut) continue; 
-      //if (hadChi2 > chiCut) continue;
+      if (hadChi2 > chi2Cut) continue;
       if (phiCorrMet < metCut) continue;
 
       if (!(mt < mtCut0) && !(njets < nJetCut0) && !(topness < topnessCut0)
 	  && !(mt2w < mt2wCut0) && !(y < yCut0) && !(dphimin < dphiCut0)
-	  && !(drlb1 > drlblCut0) && !(drlb1 < drlbgCut0) // && !(hadChi2 > chiCut0)
+	  && !(drlb1 > drlblCut0) && !(drlb1 < drlbgCut0) && !(hadChi2 > chi2Cut0)
 	  && !(phiCorrMet < metCut0) ) continue;
       
       if (charginos == 0){
@@ -385,10 +395,8 @@ int bestFOM( int iSample = 0, Float_t BR = 0.50){
       sigma_bestX += pow(c / SRs.at(isr).sig(), 2) * bb2Unc;
       sigma_bestX += pow( (a * ttUnc + b * tbUnc + c * bbUnc) / SRs.at(isr).sig() / SRs.at(isr).sig(), 2) * SRs.at(isr).sigma2_sig();
       sigma_bestX = sqrt(sigma_bestX);
-    }      
-    
+    }          
   }
-    
   SRs.at(0).Print();
   SRs.at(SR_bestX).Print();
   cout<<bestX<<"+-"<<sigma_bestX<<endl;

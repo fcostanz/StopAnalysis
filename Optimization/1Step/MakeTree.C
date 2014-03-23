@@ -15,66 +15,71 @@ int MakeTree( int iSample = 0){
     
   TString mainDir = "/home/fcostanz/Bonsai/Optimization/";
 
-  const int NSamples = 11;  
-  TString sample[NSamples];
-  sample[0] = "DiLep";
-  sample[1] = "OneLep";
-  sample[2] = "WJets";
-  sample[3] = "Rare";
-  sample[4] = "T2tb-mStop175mLSP50";
-  sample[5] = "T2tb-mStop200mLSP25";
-  sample[6] = "T2tb-mStop375mLSP50";
-  sample[7] = "T2tb-mStop250mLSP25";
-  sample[8] = "T2tb-mStop325mLSP100";
-  sample[9] = "T2tb-mStop450mLSP150";
-  sample[10] = "T2tb-mStop550mLSP1";
+  const int NBkgs = 4;
+  const int NSignals = 15;    
+  const int NSamples = NBkgs + NSignals;
   
-  const int NMtCut = 3;
-  const int NNjetCut = 2;
-  const int NTopnessCut = 3;
-  const int NMt2wCut = 4;
-  const int NYCut = 4;
-  const int NDphiCut = 3;
-  const int NDrlblCut = 3;
-  const int NDrlbgCut = 3;
-  const int NChiCut = 3;
-  const int NMetCut = 3;
-  const int NSR = NMtCut * NNjetCut * NTopnessCut * NMt2wCut * NYCut * NDphiCut * NDrlblCut * NDrlbgCut * NChiCut * NMetCut;
+  TString sampleName[NBkgs + 1];
+  sampleName[0] = "DiLep";
+  sampleName[1] = "OneLep";
+  sampleName[2] = "WJets";
+  sampleName[3] = "Rare";
+  sampleName[4] = "T2tb";
 
-  Double_t MtCut[NMtCut]           = {100., 120., 200.};
-  Double_t NjetCut[NNjetCut]       = { 3., 4.};
-  Double_t TopnessCut[NTopnessCut] = {-15., 5., 8.};
-  Double_t Mt2wCut[NMt2wCut]       = {0., 200., 250., 300.};
-  Double_t YCut[NYCut]             = {0., 8., 10., 13.};
-  Double_t DphiCut[NDphiCut]       = {0., 0.8, 1.};
-  Double_t DrlblCut[NDrlblCut]     = {5., 2., 1.5};
-  Double_t DrlbgCut[NDrlbgCut]     = {0., 1.5, 2.};
-  Double_t ChiCut[NChiCut]         = {999999999., 5., 3.};
-  Double_t MetCut[NMetCut]         = {150., 250., 350.};
+  Float_t mStop0[NSignals] = { 150., 250., 325., 175., 250., 325., 375., 225., 300., 450., 550., 200., 400., 600., 650.};  
+  Float_t mLSP0[NSignals] =  {   1., 100., 175.,   1.,  75., 150.,  50.,   1., 100., 150.,  50.,   1., 200., 250.,   1.};
 
-  Float_t tt[NMtCut][NNjetCut][NTopnessCut][NMt2wCut][NYCut][NDphiCut][NDrlblCut][NDrlbgCut][NChiCut][NMetCut] = {};
-  Float_t tb[NMtCut][NNjetCut][NTopnessCut][NMt2wCut][NYCut][NDphiCut][NDrlblCut][NDrlbgCut][NChiCut][NMetCut] = {};
-  Float_t bb[NMtCut][NNjetCut][NTopnessCut][NMt2wCut][NYCut][NDphiCut][NDrlblCut][NDrlbgCut][NChiCut][NMetCut] = {};
-  Float_t tt2[NMtCut][NNjetCut][NTopnessCut][NMt2wCut][NYCut][NDphiCut][NDrlblCut][NDrlbgCut][NChiCut][NMetCut] = {};
-  Float_t tb2[NMtCut][NNjetCut][NTopnessCut][NMt2wCut][NYCut][NDphiCut][NDrlblCut][NDrlbgCut][NChiCut][NMetCut] = {};
-  Float_t bb2[NMtCut][NNjetCut][NTopnessCut][NMt2wCut][NYCut][NDphiCut][NDrlblCut][NDrlbgCut][NChiCut][NMetCut] = {};
+  if(iSample >= NBkgs) {
+    sampleName[NBkgs] += "-mStop"; sampleName[NBkgs] += mStop0[iSample - NBkgs];
+    sampleName[NBkgs] += "mLSP"; sampleName[NBkgs] += mLSP0[iSample - NBkgs];
+  }
+
+  const int NmtCut = 4;
+  const int NnJetCut = 3;
+  const int NtopnessCut = 4;
+  const int Nmt2wCut = 4;
+  const int NyCut = 4;
+  const int NdphiCut = 3;
+  const int NdrlblCut = 3;
+  const int NdrlbgCut = 3;
+  const int Nchi2Cut = 3;
+  const int NmetCut = 3;
+  const int NSR = NmtCut * NnJetCut * NtopnessCut * Nmt2wCut * NyCut * NdphiCut * NdrlblCut * NdrlbgCut * Nchi2Cut * NmetCut;
+
+  Double_t mtCut[NmtCut]           = {100., 120., 200., 250.};
+  Double_t nJetCut[NnJetCut]       = { 3., 4., 5.};
+  Double_t topnessCut[NtopnessCut] = {-15., 3., 6., 8.};
+  Double_t mt2wCut[Nmt2wCut]       = {0., 200., 250., 300.};
+  Double_t yCut[NyCut]             = {0., 8., 10., 13.};
+  Double_t dphiCut[NdphiCut]       = {0., 0.8, 1.};
+  Double_t drlblCut[NdrlblCut]     = {5., 2., 1.5};
+  Double_t drlbgCut[NdrlbgCut]     = {0., 1.5, 2.};
+  Double_t chi2Cut[Nchi2Cut]       = {999999999., 5., 3.};
+  Double_t metCut[NmetCut]         = {150., 250., 350.};
+
+  Float_t tt[NmtCut][NnJetCut][NtopnessCut][Nmt2wCut][NyCut][NdphiCut][NdrlblCut][NdrlbgCut][Nchi2Cut][NmetCut] = {};
+  Float_t tb[NmtCut][NnJetCut][NtopnessCut][Nmt2wCut][NyCut][NdphiCut][NdrlblCut][NdrlbgCut][Nchi2Cut][NmetCut] = {};
+  Float_t bb[NmtCut][NnJetCut][NtopnessCut][Nmt2wCut][NyCut][NdphiCut][NdrlblCut][NdrlbgCut][Nchi2Cut][NmetCut] = {};
+  Float_t tt2[NmtCut][NnJetCut][NtopnessCut][Nmt2wCut][NyCut][NdphiCut][NdrlblCut][NdrlbgCut][Nchi2Cut][NmetCut] = {};
+  Float_t tb2[NmtCut][NnJetCut][NtopnessCut][Nmt2wCut][NyCut][NdphiCut][NdrlblCut][NdrlbgCut][Nchi2Cut][NmetCut] = {};
+  Float_t bb2[NmtCut][NnJetCut][NtopnessCut][Nmt2wCut][NyCut][NdphiCut][NdrlblCut][NdrlbgCut][Nchi2Cut][NmetCut] = {};
   
-  for ( int imt = 0; imt < NMtCut ; imt++){
-    for ( int ijet = 0; ijet < NNjetCut ; ijet++){
-      for ( int itopness = 0; itopness < NTopnessCut ; itopness++){
-	for ( int imt2w = 0; imt2w < NMt2wCut ; imt2w++){
-	  for ( int iy = 0; iy < NYCut ; iy++){
-	    for ( int idphi = 0; idphi < NDphiCut ; idphi++){
-	      for ( int idrlbl = 0; idrlbl < NDrlblCut ; idrlbl++){
-		for ( int idrlbg = 0; idrlbg < NDrlbgCut ; idrlbg++){
-		  for ( int ichi = 0; ichi < NChiCut ; ichi++){
-		    for ( int imet = 0; imet < NMetCut ; imet++){	     
-		      tt[imt][ijet][itopness][imt2w][iy][idphi][idrlbl][idrlbg][ichi][imet] = 0.;
-		      tb[imt][ijet][itopness][imt2w][iy][idphi][idrlbl][idrlbg][ichi][imet] = 0.;
-		      bb[imt][ijet][itopness][imt2w][iy][idphi][idrlbl][idrlbg][ichi][imet] = 0.;
-		      tt2[imt][ijet][itopness][imt2w][iy][idphi][idrlbl][idrlbg][ichi][imet] = 0.;
-		      tb2[imt][ijet][itopness][imt2w][iy][idphi][idrlbl][idrlbg][ichi][imet] = 0.;
-		      bb2[imt][ijet][itopness][imt2w][iy][idphi][idrlbl][idrlbg][ichi][imet] = 0.;
+  for ( int imt = 0; imt < NmtCut ; imt++){
+    for ( int ijet = 0; ijet < NnJetCut ; ijet++){
+      for ( int itopness = 0; itopness < NtopnessCut ; itopness++){
+	for ( int imt2w = 0; imt2w < Nmt2wCut ; imt2w++){
+	  for ( int iy = 0; iy < NyCut ; iy++){
+	    for ( int idphi = 0; idphi < NdphiCut ; idphi++){
+	      for ( int idrlbl = 0; idrlbl < NdrlblCut ; idrlbl++){
+		for ( int idrlbg = 0; idrlbg < NdrlbgCut ; idrlbg++){
+		  for ( int ichi2 = 0; ichi2 < Nchi2Cut ; ichi2++){
+		    for ( int imet = 0; imet < NmetCut ; imet++){	     
+		      tt[imt][ijet][itopness][imt2w][iy][idphi][idrlbl][idrlbg][ichi2][imet] = 0.;
+		      tb[imt][ijet][itopness][imt2w][iy][idphi][idrlbl][idrlbg][ichi2][imet] = 0.;
+		      bb[imt][ijet][itopness][imt2w][iy][idphi][idrlbl][idrlbg][ichi2][imet] = 0.;
+		      tt2[imt][ijet][itopness][imt2w][iy][idphi][idrlbl][idrlbg][ichi2][imet] = 0.;
+		      tb2[imt][ijet][itopness][imt2w][iy][idphi][idrlbl][idrlbg][ichi2][imet] = 0.;
+		      bb2[imt][ijet][itopness][imt2w][iy][idphi][idrlbl][idrlbg][ichi2][imet] = 0.;
 		    }
 		  }
 		}
@@ -95,6 +100,7 @@ int MakeTree( int iSample = 0){
   ///////////////////////////////////////////////////// 
 
   Float_t globalWeight = 0.;
+  Float_t FE = 0.;
   Float_t triggerWeight = 0.;
   Float_t puWeight = 0.;
   Float_t isrWeight = 0.;
@@ -140,6 +146,9 @@ int MakeTree( int iSample = 0){
   Float_t dphimin = 0.;
   Float_t drlb1 = 0.;
   Float_t drlbmin = 0.;
+  
+  Float_t mStop = 0.;
+  Float_t mLSP = 0.;
 
   Int_t pdgIdLep1 = 0;
   Char_t kinRegionFlag = false;
@@ -147,8 +156,14 @@ int MakeTree( int iSample = 0){
 
   /////////////////////////////////////////////////////
   //  Input Definition
-  /////////////////////////////////////////////////////  
-  TString inFileName = mainDir; inFileName += sample[iSample]; inFileName +=".root";
+  /////////////////////////////////////////////////////
+  TString inFileName = mainDir; 
+  if(iSample < NBkgs) inFileName += sampleName[iSample];
+  else {
+    inFileName = "./Signals/"; 
+    inFileName += sampleName[NBkgs];
+  }
+  inFileName +=".root";
   cout<<inFileName<<endl;
 
   TFile* inFile = new TFile(inFileName,"READ");
@@ -162,7 +177,10 @@ int MakeTree( int iSample = 0){
   if(pcp)cout<<"inputs set!"<<endl;
   int N = tree->GetEntries();  cout<<"THERE ARE "<<N<<" EVENTS IN "<<inFileName<<endl;
     
+  cout<<"here1"<<endl;
+  
   tree->SetBranchAddress( "GlobalWeight", &globalWeight);
+  tree->SetBranchAddress( "FE", &FE);
   tree->SetBranchAddress( "TriggerWeight", &triggerWeight);
   tree->SetBranchAddress( "PUWeight", &puWeight);
   tree->SetBranchAddress( "isrWeight", &isrWeight);
@@ -204,6 +222,9 @@ int MakeTree( int iSample = 0){
   tree->SetBranchAddress( "drlb1", &drlb1);
   tree->SetBranchAddress( "drlbmin", &drlbmin);
 
+  tree->SetBranchAddress("mStop",&mStop);
+  tree->SetBranchAddress("mLSP",&mLSP);
+
   tree->SetBranchAddress("pdgIdLep1",&pdgIdLep1);
   tree->SetBranchAddress("kinRegion",&kinRegionFlag);
   tree->SetBranchAddress("searchRegionPost",&searchRegionFlag);
@@ -213,24 +234,30 @@ int MakeTree( int iSample = 0){
   //  Output Definition
   ///////////////////////////////////////////////////// 
 
-  TFile* outFile = new TFile( sample[iSample]+"_optimization.root", "RECREATE"); 
-  TTree* outTree = new TTree("Optimization", "Optimization subTree");
+  TString outFileName = "./";  
+  if(iSample < NBkgs) outFileName += sampleName[iSample];
+  else outFileName += sampleName[NBkgs];
+  outFileName +="_optimization-1Step.root";
+  cout<<outFileName<<endl;
 
+  TFile* outFile = new TFile( outFileName, "RECREATE"); 
+  TTree* outTree = new TTree("Optimization", "Optimization subTree");
+  cout<<"here2"<<endl;
 
   /////////////////////////////////////////////////////
   //  Branch Definition
   ///////////////////////////////////////////////////// 
 
-  Float_t MtCut0 = 0.;
-  Float_t NjetCut0 = 0.;
-  Float_t TopnessCut0 = 0.;
-  Float_t Mt2wCut0 = 0.;
-  Float_t YCut0 = 0.;
-  Float_t DphiCut0 = 0.;
-  Float_t DrlblCut0 = 0.;
-  Float_t DrlbgCut0 = 0.;
-  Float_t ChiCut0 = 0.;
-  Float_t MetCut0 = 0.;
+  Float_t mtCut0 = 0.;
+  Float_t nJetCut0 = 0.;
+  Float_t topnessCut0 = 0.;
+  Float_t mt2wCut0 = 0.;
+  Float_t yCut0 = 0.;
+  Float_t dphiCut0 = 0.;
+  Float_t drlblCut0 = 0.;
+  Float_t drlbgCut0 = 0.;
+  Float_t chi2Cut0 = 0.;
+  Float_t metCut0 = 0.;
 
   TString SR0("");
 
@@ -241,16 +268,16 @@ int MakeTree( int iSample = 0){
   Float_t tb20 = 0.;
   Float_t bb20 = 0.;
 
-  outTree->Branch("mtCut", &MtCut0, "mtCut/F");
-  outTree->Branch("njetCut", &NjetCut0, "njetCut/F");
-  outTree->Branch("topnessCut", &TopnessCut0, "topnessCut/F");
-  outTree->Branch("mt2wCut", &Mt2wCut0, "mt2wCut/F");
-  outTree->Branch("yCut", &YCut0, "yCut/F");
-  outTree->Branch("dphiCut", &DphiCut0, "dphiCut/F");
-  outTree->Branch("drlblCut", &DrlblCut0, "drlblCut/F");
-  outTree->Branch("drlbgCut", &DrlbgCut0, "drlbgCut/F");
-  outTree->Branch("chiCut", &ChiCut0, "ChiCut/F");
-  outTree->Branch("metCut", &MetCut0, "metCut/F");
+  outTree->Branch("mtCut", &mtCut0, "mtCut/F");
+  outTree->Branch("nJetCut", &nJetCut0, "nJetCut/F");
+  outTree->Branch("topnessCut", &topnessCut0, "topnessCut/F");
+  outTree->Branch("mt2wCut", &mt2wCut0, "mt2wCut/F");
+  outTree->Branch("yCut", &yCut0, "yCut/F");
+  outTree->Branch("dphiCut", &dphiCut0, "dphiCut/F");
+  outTree->Branch("drlblCut", &drlblCut0, "drlblCut/F");
+  outTree->Branch("drlbgCut", &drlbgCut0, "drlbgCut/F");
+  outTree->Branch("chi2Cut", &chi2Cut0, "chi2Cut/F");
+  outTree->Branch("metCut", &metCut0, "metCut/F");
   outTree->Branch("sr", "TString", &SR0);
   
   outTree->Branch("tt", &tt0, "tt/F");
@@ -272,52 +299,57 @@ int MakeTree( int iSample = 0){
 
     weight = globalWeight * triggerWeight * puWeight * lumi;
     if (iSample < 2) weight *= topPtWeight;
-    if (iSample > 3 ) weight *= isrWeight;
+    if (iSample > 3 ) {
+      if ( fabs(mStop -  mStop0[iSample - NBkgs]) > 0.001) continue;
+      if ( fabs(mLSP -  mLSP0[iSample - NBkgs]) > 0.001) continue;
+      if (charginos == 0 && FE > 0.999) continue;
+      weight *= isrWeight;
+    }
     
     if (lRelIso > 0.1) continue;
     if (!searchRegionFlag) continue;
 
-    for ( int imt = 0; imt < NMtCut ; imt++){
-      if (mt < MtCut[imt]) continue;
+    for ( int imt = 0; imt < NmtCut ; imt++){
+      if (mt < mtCut[imt]) continue;
 
-      for ( int ijet = 0; ijet < NNjetCut ; ijet++){
-	if (njets < NjetCut[ijet]) continue;
+      for ( int ijet = 0; ijet < NnJetCut ; ijet++){
+	if (njets < nJetCut[ijet]) continue;
 
-	for ( int itopness = 0; itopness < NTopnessCut ; itopness++){
-	  if (topness < TopnessCut[itopness]) continue;
+	for ( int itopness = 0; itopness < NtopnessCut ; itopness++){
+	  if (topness < topnessCut[itopness]) continue;
 	  
-	  for ( int imt2w = 0; imt2w < NMt2wCut ; imt2w++){
-	    if (mt2w < Mt2wCut[imt2w]) continue;
+	  for ( int imt2w = 0; imt2w < Nmt2wCut ; imt2w++){
+	    if (mt2w < mt2wCut[imt2w]) continue;
 
-	    for ( int iy = 0; iy < NYCut ; iy++){
-	      if (y < YCut[iy]) continue;
+	    for ( int iy = 0; iy < NyCut ; iy++){
+	      if (y < yCut[iy]) continue;
 	      
-	      for ( int idphi = 0; idphi < NDphiCut ; idphi++){
-		if (dphimin < DphiCut[idphi]) continue;
+	      for ( int idphi = 0; idphi < NdphiCut ; idphi++){
+		if (dphimin < dphiCut[idphi]) continue;
 
-		for ( int idrlbl = 0; idrlbl < NDrlblCut ; idrlbl++){
-		  if (drlb1 > DrlblCut[idrlbl]) continue;
+		for ( int idrlbl = 0; idrlbl < NdrlblCut ; idrlbl++){
+		  if (drlb1 > drlblCut[idrlbl]) continue;
 
-		  for ( int idrlbg = 0; idrlbg < NDrlbgCut ; idrlbg++){
-		    if (drlb1 < DrlbgCut[idrlbg]) continue;
+		  for ( int idrlbg = 0; idrlbg < NdrlbgCut ; idrlbg++){
+		    if (drlb1 < drlbgCut[idrlbg]) continue;
 		    
-		    for ( int ichi = 0; ichi < NChiCut ; ichi++){
-		      if (hadChi2 > ChiCut[ichi]) continue;
+		    for ( int ichi2 = 0; ichi2 < Nchi2Cut ; ichi2++){
+		      if (hadChi2 > chi2Cut[ichi2]) continue;
 		      
-		      for ( int imet = 0; imet < NMetCut ; imet++){	     
-			if (phiCorrMet < MetCut[imet]) continue;
+		      for ( int imet = 0; imet < NmetCut ; imet++){	     
+			if (phiCorrMet < metCut[imet]) continue;
 			
 			if (charginos == 0){
-			  tt[imt][ijet][itopness][imt2w][iy][idphi][idrlbl][idrlbg][ichi][imet] += weight;
-			  tt2[imt][ijet][itopness][imt2w][iy][idphi][idrlbl][idrlbg][ichi][imet] += weight * weight;
+			  tt[imt][ijet][itopness][imt2w][iy][idphi][idrlbl][idrlbg][ichi2][imet] += weight;
+			  tt2[imt][ijet][itopness][imt2w][iy][idphi][idrlbl][idrlbg][ichi2][imet] += weight * weight;
 			}
 			if (charginos == 1){
-			  tb[imt][ijet][itopness][imt2w][iy][idphi][idrlbl][idrlbg][ichi][imet] += weight;
-			  tb2[imt][ijet][itopness][imt2w][iy][idphi][idrlbl][idrlbg][ichi][imet] += weight * weight;
+			  tb[imt][ijet][itopness][imt2w][iy][idphi][idrlbl][idrlbg][ichi2][imet] += weight;
+			  tb2[imt][ijet][itopness][imt2w][iy][idphi][idrlbl][idrlbg][ichi2][imet] += weight * weight;
 			}
 			if (charginos == 2){
-			  bb[imt][ijet][itopness][imt2w][iy][idphi][idrlbl][idrlbg][ichi][imet] += weight;
-			  bb2[imt][ijet][itopness][imt2w][iy][idphi][idrlbl][idrlbg][ichi][imet] += weight * weight;
+			  bb[imt][ijet][itopness][imt2w][iy][idphi][idrlbl][idrlbg][ichi2][imet] += weight;
+			  bb2[imt][ijet][itopness][imt2w][iy][idphi][idrlbl][idrlbg][ichi2][imet] += weight * weight;
 			}
 		      }
 		    }
@@ -331,48 +363,48 @@ int MakeTree( int iSample = 0){
     }
   }
 
-  for ( int imt = 0; imt < NMtCut ; imt++){
-    for ( int ijet = 0; ijet < NNjetCut ; ijet++){
-      for ( int itopness = 0; itopness < NTopnessCut ; itopness++){
-	for ( int imt2w = 0; imt2w < NMt2wCut ; imt2w++){
-	  for ( int iy = 0; iy < NYCut ; iy++){
-	    for ( int idphi = 0; idphi < NDphiCut ; idphi++){
-	      for ( int idrlbl = 0; idrlbl < NDrlblCut ; idrlbl++){
-		for ( int idrlbg = 0; idrlbg < NDrlbgCut ; idrlbg++){
-		  for ( int ichi = 0; ichi < NChiCut ; ichi++){
-		    for ( int imet = 0; imet < NMetCut ; imet++){	     
+  for ( int imt = 0; imt < NmtCut ; imt++){
+    for ( int ijet = 0; ijet < NnJetCut ; ijet++){
+      for ( int itopness = 0; itopness < NtopnessCut ; itopness++){
+	for ( int imt2w = 0; imt2w < Nmt2wCut ; imt2w++){
+	  for ( int iy = 0; iy < NyCut ; iy++){
+	    for ( int idphi = 0; idphi < NdphiCut ; idphi++){
+	      for ( int idrlbl = 0; idrlbl < NdrlblCut ; idrlbl++){
+		for ( int idrlbg = 0; idrlbg < NdrlbgCut ; idrlbg++){
+		  for ( int ichi2 = 0; ichi2 < Nchi2Cut ; ichi2++){
+		    for ( int imet = 0; imet < NmetCut ; imet++){	     
 		      
-		      MtCut0 = MtCut[imt];
-		      NjetCut0 = NjetCut[ijet];    
-		      TopnessCut0 = TopnessCut[itopness];
-		      Mt2wCut0 = Mt2wCut[imt2w];
-		      YCut0 = YCut[iy];
-		      DphiCut0 =  DphiCut[idphi];
-		      DrlblCut0 =  DrlblCut[idrlbl];
-		      DrlbgCut0 =  DrlbgCut[idrlbg];
-		      ChiCut0 =  ChiCut[ichi];
-		      MetCut0 = MetCut[imet];
+		      mtCut0 = mtCut[imt];
+		      nJetCut0 = nJetCut[ijet];    
+		      topnessCut0 = topnessCut[itopness];
+		      mt2wCut0 = mt2wCut[imt2w];
+		      yCut0 = yCut[iy];
+		      dphiCut0 =  dphiCut[idphi];
+		      drlblCut0 =  drlblCut[idrlbl];
+		      drlbgCut0 =  drlbgCut[idrlbg];
+		      chi2Cut0 =  chi2Cut[ichi2];
+		      metCut0 = metCut[imet];
 		      
 		      
-		      TString tmp = "MT-"; tmp += MtCut[imt]; tmp += "_";
-		      tmp += "Njet-"; tmp += NjetCut[ijet]; tmp += "_";
-		      tmp += "Topness-"; tmp += TopnessCut[itopness]; tmp += "_";
-		      tmp += "Mt2w-"; tmp += Mt2wCut[imt2w]; tmp += "_";
-		      tmp += "Y-"; tmp += YCut[iy]; tmp += "_";
-		      tmp += "Dphi-"; tmp += DphiCut[idphi]; tmp += "_";
-		      tmp += "Drlbl-"; tmp += DrlblCut[idrlbl]; tmp += "_";
-		      tmp += "Drlbg-"; tmp += DrlbgCut[idrlbg]; tmp += "_";
-		      tmp += "Chi-"; tmp += ChiCut[ichi]; tmp += "_";
-		      tmp += "Met-"; tmp += MetCut[imet];
+		      TString tmp = "MT-"; tmp += mtCut[imt]; tmp += "_";
+		      tmp += "Njet-"; tmp += nJetCut[ijet]; tmp += "_";
+		      tmp += "Topness-"; tmp += topnessCut[itopness]; tmp += "_";
+		      tmp += "Mt2w-"; tmp += mt2wCut[imt2w]; tmp += "_";
+		      tmp += "Y-"; tmp += yCut[iy]; tmp += "_";
+		      tmp += "Dphi-"; tmp += dphiCut[idphi]; tmp += "_";
+		      tmp += "Drlbl-"; tmp += drlblCut[idrlbl]; tmp += "_";
+		      tmp += "Drlbg-"; tmp += drlbgCut[idrlbg]; tmp += "_";
+		      tmp += "Chi2-"; tmp += chi2Cut[ichi2]; tmp += "_";
+		      tmp += "Met-"; tmp += metCut[imet];
 		      
 		      SR0 = tmp;
 		      
-		      tt0 = tt[imt][ijet][itopness][imt2w][iy][idphi][idrlbl][idrlbg][ichi][imet];
-		      tb0 = tb[imt][ijet][itopness][imt2w][iy][idphi][idrlbl][idrlbg][ichi][imet];
-		      bb0 = bb[imt][ijet][itopness][imt2w][iy][idphi][idrlbl][idrlbg][ichi][imet];
-		      tt20 = tt2[imt][ijet][itopness][imt2w][iy][idphi][idrlbl][idrlbg][ichi][imet];
-		      tb20 = tb2[imt][ijet][itopness][imt2w][iy][idphi][idrlbl][idrlbg][ichi][imet];
-		      bb20 = bb2[imt][ijet][itopness][imt2w][iy][idphi][idrlbl][idrlbg][ichi][imet];
+		      tt0 = tt[imt][ijet][itopness][imt2w][iy][idphi][idrlbl][idrlbg][ichi2][imet];
+		      tb0 = tb[imt][ijet][itopness][imt2w][iy][idphi][idrlbl][idrlbg][ichi2][imet];
+		      bb0 = bb[imt][ijet][itopness][imt2w][iy][idphi][idrlbl][idrlbg][ichi2][imet];
+		      tt20 = tt2[imt][ijet][itopness][imt2w][iy][idphi][idrlbl][idrlbg][ichi2][imet];
+		      tb20 = tb2[imt][ijet][itopness][imt2w][iy][idphi][idrlbl][idrlbg][ichi2][imet];
+		      bb20 = bb2[imt][ijet][itopness][imt2w][iy][idphi][idrlbl][idrlbg][ichi2][imet];
 		      
 		      outTree->Fill();
 		    }
