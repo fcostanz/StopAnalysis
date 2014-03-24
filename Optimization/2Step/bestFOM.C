@@ -200,7 +200,7 @@ public:
     exclusionh->SetTitle("exclusion");
 
     for (int ibin = 0; ibin < exclusionh->GetSize(); ibin++){
-      if ( exclusionh->GetBinContent( ibin) < 2.0)
+      if ( exclusionh->GetBinContent( ibin) < 3.0)
 	exclusionh->SetBinContent( ibin, 0);
       else 
 	exclusionh->SetBinContent( ibin, 1);
@@ -217,7 +217,7 @@ public:
     exclusionUph->SetTitle("exclusionUp");
 
     for (int ibin = 0; ibin < exclusionUph->GetSize(); ibin++){
-      if ( exclusionUph->GetBinContent( ibin) + exclusionUph->GetBinError( ibin)< 2.0)
+      if ( exclusionUph->GetBinContent( ibin) + exclusionUph->GetBinError( ibin)< 3.0)
 	exclusionUph->SetBinContent( ibin, 0);
       else 
 	exclusionUph->SetBinContent( ibin, 1);
@@ -234,7 +234,7 @@ public:
     exclusionDownh->SetTitle("exclusionDown");
 
     for (int ibin = 0; ibin < exclusionDownh->GetSize(); ibin++){
-      if ( exclusionDownh->GetBinContent( ibin) - exclusionDownh->GetBinError( ibin)< 2.0)
+      if ( exclusionDownh->GetBinContent( ibin) - exclusionDownh->GetBinError( ibin)< 3.0)
 	exclusionDownh->SetBinContent( ibin, 0);
       else 
 	exclusionDownh->SetBinContent( ibin, 1);
@@ -307,7 +307,7 @@ public:
   SRCollection(){
     SRs = new std::vector<SR*>;
 
-    nBest = 5;
+    nBest = 4;
   };
   ~SRCollection(){};
 
@@ -316,13 +316,13 @@ public:
     else if ((int) SRs->size() <= index) return 0;
     else return SRs->at(index);
   }
-
+  
   int size() const{
     if (SRs == 0) return -1;
     return (int) SRs->size();
   }
 
-  Int_t Sort(BR = 0.5) {
+  Int_t Sort(Float_t BR = 0.5) {
     if (SRs == 0) return -1;
 
     for (int isr=0; isr < (int) SRs->size(); isr++){
@@ -330,10 +330,10 @@ public:
       SRs->at(isr)->exclusionID = -1;
       SRs->at(isr)->ExclusionDown();
     }
-
+    
     sort(SRs->begin(), SRs->end(), sortByIntegral);
     excluded = new TH2F(*SRs->at(0)->exclusionDownh);
-    
+
     cout<<SRs->at(0)->BR<<endl;    
     cout<<SRs->at(0)->id_SR<<" "<<SRs->at(0)->Integral()<<endl;
     
@@ -368,7 +368,55 @@ public:
     return 0;
   }
   
-  Float_t BRs[4];
+  Int_t AddSort(Float_t BR = 0.25, Int_t skip = 4) {
+    if (SRs == 0) return -1;
+    
+    for (int isr=0; isr < (int) SRs->size(); isr++){
+      SRs->at(isr)->BR = BR;
+      SRs->at(isr)->exclusionID = -1;
+      SRs->at(isr)->ExclusionDown();
+    }
+
+    excluded = new TH2F(*SRs->at(0)->exclusionh);
+    for (int isr=1; isr < (int) SRs->size() && isr < nBest; isr++){
+      TH2F* add = new TH2F(*SRs->at(isr)->exclusionDownh);
+      TH2F* mult = new TH2F(*SRs->at(isr)->exclusionDownh);
+      mult->Multiply(excluded);
+      add->Add( mult, -1);
+      excluded->Add(add);
+    }
+
+    for (int isr=skip; isr < skip + nBest && isr< (int) SRs->size(); isr++){
+      int bestSR = -1;
+      Float_t bestIntegral = -1.;
+      
+      for (int jsr=skip; jsr< (int) SRs->size(); jsr++){
+	TH2F* add = new TH2F(*SRs->at(jsr)->exclusionDownh);
+	TH2F* mult = new TH2F(*SRs->at(jsr)->exclusionDownh);
+	mult->Multiply(excluded);
+	add->Add( mult, -1);
+	
+	Float_t integral = add->Integral();
+	if ( bestIntegral < integral){
+	  bestIntegral = integral;
+	  bestSR = jsr;
+	}
+      }
+      
+      SR* tmp = SRs->at(isr);
+      SRs->at(isr) = SRs->at(bestSR);
+      SRs->at(bestSR) = tmp;
+
+      TH2F* add = new TH2F(*SRs->at(isr)->exclusionDownh);
+      TH2F* mult = new TH2F(*SRs->at(isr)->exclusionDownh);
+      mult->Multiply(excluded);
+      add->Add( mult, -1); cout<<SRs->at(isr)->id_SR<<" "<<add->Integral()<<endl;
+      excluded->Add(add);
+    }
+    
+    return 0;
+  }
+
   
   std::vector<SR*>* SRs;
   TH2F* excluded;
@@ -438,10 +486,18 @@ int bestFOM(){
   }
 
   TFile* outFile = new TFile( "Optimization-Coverage.root","RECREATE");
+  SRs->nBest = 4;
   SRs->Sort(0.5);
+
+  SRs->nBest = 2;
+  SRs->AddSort(0.25, 4);
   
-  for (int ibr = 0; ibr < 2; ibr++){    
-    for (int isr=0; isr< 5; isr++){
+  SRs->nBest = 2;
+  SRs->AddSort(0.75, 6);
+
+
+  for (int ibr = 0; ibr < 3; ibr++){    
+    for (int isr=0; isr< 8; isr++){
       SRs->at(isr)->BR = BRs[ibr];
 
       SRs->at(isr)->sig();
@@ -455,9 +511,10 @@ int bestFOM(){
     }
   }
 
+  SRs->nBest = 5;
   SRs->Sort(1.0);
   
-  for (int ibr = 2; ibr < 4; ibr++){    
+  for (int ibr = 3; ibr < 4; ibr++){    
     for (int isr=0; isr< 5; isr++){
       SRs->at(isr)->BR = BRs[ibr];
 
