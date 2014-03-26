@@ -8,12 +8,12 @@
 
 bool pcp = true;
 
-int MakeTree(){
+int MakeTree(Float_t mySR = 105089){
   
   TH1::SetDefaultSumw2(true);
   if(pcp)cout<<"going to set inputs"<<endl;
     
-  TString mainDir = "/home/fcostanz/Bonsai/Optimization/";
+  TString mainDir = "/nfs/dust/cms/user/fcost/store/Bonsai/Optimization/";
 
   const int NSamples = 5;
   
@@ -25,93 +25,7 @@ int MakeTree(){
   sample[4] = "Rare";
   
   std::vector<Float_t> SRs;
-  SRs.push_back(105089);
-  SRs.push_back(108918);
-  SRs.push_back(124470);
-  SRs.push_back(1431);
-  SRs.push_back(143910);
-  SRs.push_back(1513);
-  SRs.push_back(159438);
-  SRs.push_back(16294);
-  SRs.push_back(16297);
-  SRs.push_back(163596);
-  SRs.push_back(174960);
-  SRs.push_back(1755);
-  SRs.push_back(1784);
-  SRs.push_back(20044);
-  SRs.push_back(2027);
-  SRs.push_back(21739);
-  SRs.push_back(23689);
-  SRs.push_back(2377);
-  SRs.push_back(25678);
-  SRs.push_back(259);
-  SRs.push_back(2999);
-  SRs.push_back(31357);
-  SRs.push_back(31537);
-  SRs.push_back(31620);
-  SRs.push_back(31812);
-  SRs.push_back(325);
-  SRs.push_back(3942);
-  SRs.push_back(4);
-  SRs.push_back(47711);
-  SRs.push_back(47736);
-  SRs.push_back(47791);
-  SRs.push_back(47898);
-  SRs.push_back(47952);
-  SRs.push_back(48006);
-  SRs.push_back(48033);
-  SRs.push_back(48114);
-  SRs.push_back(48195);
-  SRs.push_back(48199);
-  SRs.push_back(48222);
-  SRs.push_back(48276);
-  SRs.push_back(48277);
-  SRs.push_back(48280);
-  SRs.push_back(48304);
-  SRs.push_back(48791);
-  SRs.push_back(49167);
-  SRs.push_back(49248);
-  SRs.push_back(50411);
-  SRs.push_back(50492);
-  SRs.push_back(51141);
-  SRs.push_back(55084);
-  SRs.push_back(55087);
-  SRs.push_back(55110);
-  SRs.push_back(56001);
-  SRs.push_back(569);
-  SRs.push_back(62211);
-  SRs.push_back(62214);
-  SRs.push_back(62299);
-  SRs.push_back(62376);
-  SRs.push_back(62470);
-  SRs.push_back(62777);
-  SRs.push_back(62874);
-  SRs.push_back(63603);
-  SRs.push_back(63697);
-  SRs.push_back(63750);
-  SRs.push_back(63828);
-  SRs.push_back(64327);
-  SRs.push_back(65043);
-  SRs.push_back(66745);
-  SRs.push_back(739);
-  SRs.push_back(77766);
-  SRs.push_back(77781);
-  SRs.push_back(77784);
-  SRs.push_back(77790);
-  SRs.push_back(77815);
-  SRs.push_back(77820);
-  SRs.push_back(78004);
-  SRs.push_back(78006);
-  SRs.push_back(78009);
-  SRs.push_back(78010);
-  SRs.push_back(78180);
-  SRs.push_back(78220);
-  SRs.push_back(78327);
-  SRs.push_back(78933);
-  SRs.push_back(81657);
-  SRs.push_back(82053);
-  SRs.push_back(85572);
-  SRs.push_back(893);
+  SRs.push_back(mySR);
 
   TFile* cutFile = new TFile( "../1Step/"+sample[1]+"_optimization-1Step.root", "READ"); 
   TTree* cutTree;  
@@ -127,6 +41,9 @@ int MakeTree(){
   Float_t drlbgCut = 0.;
   Float_t chi2Cut = 0.;
   Float_t metCut = 0.;
+  Float_t m3Cut = 0.;
+  Float_t centralityCut = 0.;
+  Float_t mlbCut = 0.;
 
   cutTree->SetBranchAddress( "mtCut", &mtCut);
   cutTree->SetBranchAddress( "nJetCut", &nJetCut);
@@ -138,6 +55,9 @@ int MakeTree(){
   cutTree->SetBranchAddress( "drlbgCut", &drlbgCut);
   cutTree->SetBranchAddress( "chi2Cut", &chi2Cut);
   cutTree->SetBranchAddress( "metCut", &metCut);
+  cutTree->SetBranchAddress( "m3Cut", &m3Cut);
+  cutTree->SetBranchAddress( "centralityCut", &centralityCut);
+  cutTree->SetBranchAddress( "mlbCut", &mlbCut);
 
   Float_t lumi=19500.;
   Float_t weight = 1.;
@@ -145,6 +65,7 @@ int MakeTree(){
   //  Variable Definition
   ///////////////////////////////////////////////////// 
 
+  Float_t xs = 0.;
   Float_t globalWeight = 0.;
   Float_t FE = 0.;
   Float_t triggerWeight = 0.;
@@ -185,6 +106,8 @@ int MakeTree(){
   Float_t mlb1 = 0.;
   Float_t mlb = 0.;
   Float_t m3b = 0.;
+  Float_t m3 = 0.;
+  Float_t centrality = 0.;
   Float_t mt2w = 0.;
   Float_t hadChi2 = 0.;
   Float_t topness = 0.;
@@ -211,6 +134,7 @@ int MakeTree(){
 
     inTree[iSample] = (TTree*)inFile[iSample]->Get("NoSystematic/bonsai");
 
+    inTree[iSample]->SetBranchAddress( "xs", &xs);
     inTree[iSample]->SetBranchAddress( "GlobalWeight", &globalWeight);
     inTree[iSample]->SetBranchAddress( "FE", &FE);
     inTree[iSample]->SetBranchAddress( "TriggerWeight", &triggerWeight);
@@ -246,6 +170,8 @@ int MakeTree(){
     inTree[iSample]->SetBranchAddress( "mlb1", &mlb1);
     inTree[iSample]->SetBranchAddress( "mlb", &mlb);
     inTree[iSample]->SetBranchAddress( "m3b", &m3b);
+    inTree[iSample]->SetBranchAddress( "m3", &m3);
+    inTree[iSample]->SetBranchAddress( "centrality", &centrality);
     inTree[iSample]->SetBranchAddress( "mt2w", &mt2w);
     inTree[iSample]->SetBranchAddress( "hadChi2", &hadChi2);
     inTree[iSample]->SetBranchAddress( "topness", &topness);
@@ -264,8 +190,9 @@ int MakeTree(){
 
   /////////////////////////////////////////////////////
   //  Output Definition
-  ///////////////////////////////////////////////////// 
-  TFile* outFile = new TFile( "Optimization-2Step.root", "RECREATE");
+  /////////////////////////////////////////////////////
+  TString outFileName = "MakeTree/"; outFileName += mySR; outFileName += ".root";
+  TFile* outFile = new TFile( outFileName, "RECREATE");
   outFile->cd();
   TTree* outTree = new TTree("Optimization", "Optimization subTree");
   
@@ -274,26 +201,31 @@ int MakeTree(){
   TH2F *tt  = new TH2F( "tt", "tt",30,62.5,812.5, 15, -12.5, 362.5);
   TH2F *tb  = new TH2F( "tb", "tb",30,62.5,812.5, 15, -12.5, 362.5);
   TH2F *bb  = new TH2F( "bb", "bb",30,62.5,812.5, 15, -12.5, 362.5);
-  
+  TH2F *sig_tot = new TH2F( "sig_tot", "sig_tot",30,62.5,812.5, 15, -12.5, 362.5);
+
   Float_t bkg[NSamples - 1] = {};
   Float_t bkg2[NSamples - 1] = {};
 
   outTree->Branch( "SR", &SR, "SR/I");
 
-  outTree->Branch(      "mtCut",      &mtCut,      "mtCut/F");
-  outTree->Branch(    "njetCut",    &nJetCut,    "njetCut/F");
-  outTree->Branch( "topnessCut", &topnessCut, "topnessCut/F");
-  outTree->Branch(    "mt2wCut",    &mt2wCut,    "mt2wCut/F");
-  outTree->Branch(       "yCut",       &yCut,       "yCut/F");
-  outTree->Branch(    "dphiCut",    &dphiCut,    "dphiCut/F");
-  outTree->Branch(   "drlblCut",   &drlblCut,   "drlblCut/F");
-  outTree->Branch(   "drlbgCut",   &drlbgCut,   "drlbgCut/F");
-  outTree->Branch(    "chi2Cut",    &chi2Cut,    "chi2Cut/F");
-  outTree->Branch(     "metCut",     &metCut,     "metCut/F");
+  outTree->Branch(         "mtCut",         &mtCut,         "mtCut/F");
+  outTree->Branch(       "njetCut",       &nJetCut,       "njetCut/F");
+  outTree->Branch(    "topnessCut",    &topnessCut,    "topnessCut/F");
+  outTree->Branch(       "mt2wCut",       &mt2wCut,       "mt2wCut/F");
+  outTree->Branch(          "yCut",          &yCut,          "yCut/F");
+  outTree->Branch(       "dphiCut",       &dphiCut,       "dphiCut/F");
+  outTree->Branch(      "drlblCut",      &drlblCut,      "drlblCut/F");
+  outTree->Branch(      "drlbgCut",      &drlbgCut,      "drlbgCut/F");
+  outTree->Branch(       "chi2Cut",       &chi2Cut,       "chi2Cut/F");
+  outTree->Branch(        "metCut",        &metCut,        "metCut/F");
+  outTree->Branch(         "m3Cut",         &m3Cut,         "m3Cut/F");
+  outTree->Branch( "centralityCut", &centralityCut, "centralityCut/F");
+  outTree->Branch(        "mlbCut",        &mlbCut,        "mlbCut/F");
 
   outTree->Branch("tt","TH2F",&tt,32000,0);
   outTree->Branch("tb","TH2F",&tb,32000,0);
   outTree->Branch("bb","TH2F",&bb,32000,0);
+  outTree->Branch("sig_tot","TH2F",&sig_tot,32000,0);
 
   outTree->Branch( "diLep", &bkg[0],  "diLep/F");
   outTree->Branch("oneLep", &bkg[1], "oneLep/F");
@@ -324,7 +256,10 @@ int MakeTree(){
     cout<<"drlbgCut = "<<drlbgCut<<endl;
     cout<<"chi2Cut = "<<chi2Cut<<endl;
     cout<<"metCut = "<<metCut<<endl;
-    
+    cout<<"m3Cut = "<<mlbCut<<endl;
+    cout<<"centralityCut = "<<centralityCut<<endl;
+    cout<<"mlbCut = "<<mlbCut<<endl;
+
     tt->Reset();
     tb->Reset();
     bb->Reset();    
@@ -351,6 +286,10 @@ int MakeTree(){
       
 	if (iSample < 2.001 && iSample > 0.999) weight *= topPtWeight;
       
+	if (iSample < 0.001){
+	  sig_tot->SetBinContent( sig_tot->FindBin(mStop, mLSP), xs * lumi);
+	}
+
 	if (lRelIso > 0.1) continue;
 	if (!searchRegionFlag) continue;
 	
@@ -364,6 +303,9 @@ int MakeTree(){
 	if (drlb1 < drlbgCut) continue; 
 	if (hadChi2 > chi2Cut) continue;
 	if (phiCorrMet < metCut) continue;
+	if (m3 < m3Cut) continue;
+	if (centrality < centralityCut) continue;
+	if (mlb > mlbCut) continue;
 
 	if (iSample < 0.001){
 	  if (charginos == 0)

@@ -13,7 +13,21 @@
 using namespace std;
 
 bool pcp = true;
+/*
+Double_t On(Double_t *x, Double_t *par)
+{
+  Float_t mStop = 175.;
+  if (( x[0] - x[1]) > mStop) return 1.;
+  else return 0.;
+}
 
+Double_t Off(Double_t *x, Double_t *par)
+{
+  Float_t mStop = 175.;
+  if (( x[0] - x[1]) <= mStop) return 1.;
+  else return 0.;  
+}
+*/
 class SR{
 public:
   SR(Float_t BR_ = 0.5){
@@ -33,10 +47,14 @@ public:
     drlbgCut = 0.;
     chi2Cut = 0.;
     metCut = 0.;
+    m3Cut = 0.;
+    centralityCut = 0.;
+    mlbCut = 0.;
 
     tth = 0;
     tbh = 0;  
     bbh = 0;
+    sig_toth = 0;
 
     for (int ibkg = 0; ibkg < 4; ibkg++){
       bkg[ibkg] = 0.;
@@ -71,10 +89,14 @@ public:
     drlbgCut = copy.drlbgCut;
     chi2Cut = copy.chi2Cut;
     metCut = copy.metCut;
+    m3Cut = copy.m3Cut;
+    centralityCut = copy.centralityCut;
+    mlbCut = copy.mlbCut;
 
     tth = new TH2F(*copy.tth);
     tbh = new TH2F(*copy.tbh);
     bbh = new TH2F(*copy.bbh);
+    sig_toth = new TH2F(*copy.sig_toth);
 
     for (int ibkg = 0; ibkg < 4; ibkg++){
       bkg[ibkg] = copy.bkg[ibkg];
@@ -104,10 +126,14 @@ public:
     drlbgCut = copy.drlbgCut;
     chi2Cut = copy.chi2Cut;
     metCut = copy.metCut;
+    m3Cut = copy.m3Cut;
+    centralityCut = copy.centralityCut;
+    mlbCut = copy.mlbCut;
 
     tth = new TH2F(*copy.tth);
     tbh = new TH2F(*copy.tbh);
     bbh = new TH2F(*copy.bbh);
+    sig_toth = new TH2F(*copy.sig_toth);
 
     for (int ibkg = 0; ibkg < 4; ibkg++){
       bkg[ibkg] = copy.bkg[ibkg];
@@ -134,10 +160,14 @@ public:
   Float_t drlbgCut;
   Float_t chi2Cut;
   Float_t metCut;
+  Float_t m3Cut;
+  Float_t centralityCut;
+  Float_t mlbCut;
 
   TH2F* tth;
   TH2F* tbh;
   TH2F* bbh;
+  TH2F* sig_toth;
 
   TH2F* sigh;
   TH2F* FOMh;
@@ -243,13 +273,68 @@ public:
     return exclusionDownh;
   }
 
-  Float_t Integral() const {
-    if (exclusionID == 0 && exclusionh) return exclusionh->Integral();
-    else if (exclusionID == 1 && exclusionUph) return exclusionUph->Integral();
-    else if (exclusionID == -1 && exclusionDownh) return exclusionDownh->Integral();
-
+  Float_t IntegralOn() const {
+    TH2F* histo;
+    if (exclusionID == 0 && exclusionh) histo = exclusionh;
+    else if (exclusionID == 1 && exclusionUph) histo = exclusionUph;
+    else if (exclusionID == -1 && exclusionDownh) histo = exclusionDownh;
     else return -1.;
+
+    Float_t mStop = 175.;
+    
+    Float_t integral = 0.;
+    Int_t i = 0;
+    Int_t j = 0;
+    Int_t k = 0;
+    Float_t x = 0.;
+    Float_t y = 0.;
+
+    for (int ibin = 0; ibin < histo->GetSize(); ibin++){
+      if (histo->IsBinOverflow(ibin)) continue;
+      if (histo->IsBinUnderflow(ibin)) continue;
+
+      histo->GetBinXYZ(ibin, i, j, k);
+      
+      x = histo->GetXaxis()->GetBinCenter(i);
+      y = histo->GetYaxis()->GetBinCenter(j);
+
+      if ( (x - y) >  mStop ) integral += histo->GetBinContent(ibin);
+    }
+    return integral;
   }
+
+
+  Float_t IntegralOff() const {
+    TH2F* histo;
+    if (exclusionID == 0 && exclusionh) histo = exclusionh;
+    else if (exclusionID == 1 && exclusionUph) histo = exclusionUph;
+    else if (exclusionID == -1 && exclusionDownh) histo = exclusionDownh;
+    else return -1.;
+
+    Float_t mStop = 176.;
+    
+    Float_t integral = 0.;
+    Int_t i = 0;
+    Int_t j = 0;
+    Int_t k = 0;
+    Float_t x = 0.;
+    Float_t y = 0.;
+
+    for (int ibin = 0; ibin < histo->GetSize(); ibin++){
+      if (histo->IsBinOverflow(ibin)) continue;
+      if (histo->IsBinUnderflow(ibin)) continue;
+
+      histo->GetBinXYZ(ibin, i, j, k);
+      
+      x = histo->GetXaxis()->GetBinCenter(i);
+      y = histo->GetYaxis()->GetBinCenter(j);
+
+      if ( (x - y) <=  mStop ) integral += histo->GetBinContent(ibin);
+    }
+    return integral;
+  }
+
+
   
   Int_t Print() const {
     cout<<"ID = "<<Ntry<<endl;
@@ -264,12 +349,15 @@ public:
     cout<<"drlbgCut = "<<drlbgCut<<endl;
     cout<<"chi2Cut = "<<chi2Cut<<endl;
     cout<<"metCut = "<<metCut<<endl;
+    cout<<"m3Cut = "<<m3Cut<<endl;
+    cout<<"centralityCut = "<<centralityCut<<endl;
+    cout<<"mlbCut = "<<mlbCut<<endl;
 
     cout<<"; dilep="<<bkg[0]<<"+-"<<sqrt(bkg2[0]);
     cout<<"; onelep="<<bkg[1]<<"+-"<<sqrt(bkg2[1]);
     cout<<"; wjets="<<bkg[2]<<"+-"<<sqrt(bkg2[2]);
     cout<<"; rare="<<bkg[3]<<"+-"<<sqrt(bkg2[3]);
-    cout<<"; integral="<<Integral();
+    cout<<"; integral="<<IntegralOn() + IntegralOff();
     cout<<endl;    
 
     return 0;
@@ -288,18 +376,37 @@ public:
     if (!gDirectory->GetDirectory(dirName)) gDirectory->mkdir(dirName);
     gDirectory->cd(dirName);
 
+    TH2F* sig_effh;
+    TH1F* bkgh = new TH1F("bkg","bkg", 4, 0., 4.);   
+    for (int ibkg = 0; ibkg < 4; ibkg++){
+      bkgh->SetBinContent(ibkg + 1, bkg[ibkg]);
+      bkgh->SetBinError(ibkg + 1, sqrt(bkg2[ibkg]));    
+    }
+    bkgh->Write();
+
     if (sigh) sigh->Write();
     if (FOMh) FOMh->Write();      
     if (exclusionh)     exclusionh->Write();
     if (exclusionUph)   exclusionUph->Write();
     if (exclusionDownh) exclusionDownh->Write();
+    if (sig_toth) sig_toth->Write();
+
+    if (sig_toth && sigh) {
+      sig_effh = new TH2F(*sigh);
+      sig_effh->SetName("sig_eff");
+      sig_effh->SetTitle("sig_eff");
+      sig_effh->Divide(sig_toth);
+    }
+
+    if (sig_effh) sig_effh->Write();
 
     holdDir->cd();
     return 0;
   }
 };
 
-bool sortByIntegral (const SR* i,const SR* j) { return (i->Integral() > j->Integral());};
+bool sortByIntegralOn (const SR* i,const SR* j) { return (i->IntegralOn() > j->IntegralOn());};
+bool sortByIntegralOff (const SR* i,const SR* j) { return (i->IntegralOff() > j->IntegralOff());};
 
 class SRCollection{
 public:
@@ -322,7 +429,32 @@ public:
     return (int) SRs->size();
   }
 
-  Int_t Sort(Float_t BR = 0.5) {
+  Int_t SortOn(Float_t BR = 0.5) {
+    TH2F* on = new TH2F(*SRs->at(0)->exclusionDownh);
+    on->Reset();
+
+    Float_t mStop = 175.;
+    
+    Int_t i = 0;
+    Int_t j = 0;
+    Int_t k = 0;
+    Float_t x = 0.;
+    Float_t y = 0.;
+
+    for (int ibin = 0; ibin < on->GetSize(); ibin++){
+      on->SetBinContent( ibin, 0.);
+      
+      if (on->IsBinOverflow(ibin)) continue;
+      if (on->IsBinUnderflow(ibin)) continue;
+
+      on->GetBinXYZ(ibin, i, j, k);
+      
+      x = on->GetXaxis()->GetBinCenter(i);
+      y = on->GetYaxis()->GetBinCenter(j);
+
+      if ( (x - y) >  mStop ) on->SetBinContent( ibin, 1.);
+    }
+
     if (SRs == 0) return -1;
 
     for (int isr=0; isr < (int) SRs->size(); isr++){
@@ -331,11 +463,12 @@ public:
       SRs->at(isr)->ExclusionDown();
     }
     
-    sort(SRs->begin(), SRs->end(), sortByIntegral);
+    sort(SRs->begin(), SRs->end(), sortByIntegralOn);
     excluded = new TH2F(*SRs->at(0)->exclusionDownh);
+    excluded->Multiply(on);
 
     cout<<SRs->at(0)->BR<<endl;    
-    cout<<SRs->at(0)->id_SR<<" "<<SRs->at(0)->Integral()<<endl;
+    cout<<SRs->at(0)->id_SR<<" "<<SRs->at(0)->IntegralOn()<<endl;          
     
     for (int isr=1; isr < nBest && isr< (int) SRs->size(); isr++){
       int bestSR = -1;
@@ -346,7 +479,8 @@ public:
 	TH2F* mult = new TH2F(*SRs->at(jsr)->exclusionDownh);
 	mult->Multiply(excluded);
 	add->Add( mult, -1);
-	
+	add->Multiply(on);
+
 	Float_t integral = add->Integral();
 	if ( bestIntegral < integral){
 	  bestIntegral = integral;
@@ -361,15 +495,41 @@ public:
       TH2F* add = new TH2F(*SRs->at(isr)->exclusionDownh);
       TH2F* mult = new TH2F(*SRs->at(isr)->exclusionDownh);
       mult->Multiply(excluded);
-      add->Add( mult, -1); cout<<SRs->at(isr)->id_SR<<" "<<add->Integral()<<endl;
+      add->Add( mult, -1); 
+      add->Multiply(on);
+      cout<<SRs->at(isr)->id_SR<<" "<<add->Integral()<<endl;
       excluded->Add(add);
     }
     
     return 0;
   }
   
-  Int_t AddSort(Float_t BR = 0.25, Int_t skip = 4) {
+  Int_t AddSortOff(Float_t BR = 0.5, Int_t skip = 4) {
     if (SRs == 0) return -1;
+    TH2F* off = new TH2F(*SRs->at(0)->exclusionDownh);
+    off->Reset();
+    
+    Float_t mTop = 176.;
+    
+    Int_t i = 0;
+    Int_t j = 0;
+    Int_t k = 0;
+    Float_t x = 0.;
+    Float_t y = 0.;
+
+    for (int ibin = 0; ibin < off->GetSize(); ibin++){
+      off->SetBinContent( ibin, 0.);
+      
+      if (off->IsBinOverflow(ibin)) continue;
+      if (off->IsBinUnderflow(ibin)) continue;
+
+      off->GetBinXYZ(ibin, i, j, k);
+      
+      x = off->GetXaxis()->GetBinCenter(i);
+      y = off->GetYaxis()->GetBinCenter(j);
+
+      if ( (x - y) <  mTop ) off->SetBinContent( ibin, 1.);
+    }
     
     for (int isr=0; isr < (int) SRs->size(); isr++){
       SRs->at(isr)->BR = BR;
@@ -377,25 +537,22 @@ public:
       SRs->at(isr)->ExclusionDown();
     }
 
-    excluded = new TH2F(*SRs->at(0)->exclusionh);
-    for (int isr=1; isr < (int) SRs->size() && isr < nBest; isr++){
-      TH2F* add = new TH2F(*SRs->at(isr)->exclusionDownh);
-      TH2F* mult = new TH2F(*SRs->at(isr)->exclusionDownh);
-      mult->Multiply(excluded);
-      add->Add( mult, -1);
-      excluded->Add(add);
-    }
+    sort(SRs->begin()+skip, SRs->end(), sortByIntegralOff);
+    excluded = new TH2F(*SRs->at(skip)->exclusionDownh);
+    excluded->Multiply(off);
+    cout<<SRs->at(skip)->id_SR<<" "<<SRs->at(skip)->IntegralOff()<<" "<<excluded->Integral()<<endl;       
 
-    for (int isr=skip; isr < skip + nBest && isr< (int) SRs->size(); isr++){
+    for (int isr=skip+1; isr < skip + nBest && isr< (int) SRs->size(); isr++){
       int bestSR = -1;
       Float_t bestIntegral = -1.;
       
-      for (int jsr=skip; jsr< (int) SRs->size(); jsr++){
+      for (int jsr=skip + 1; jsr< (int) SRs->size(); jsr++){
 	TH2F* add = new TH2F(*SRs->at(jsr)->exclusionDownh);
 	TH2F* mult = new TH2F(*SRs->at(jsr)->exclusionDownh);
 	mult->Multiply(excluded);
 	add->Add( mult, -1);
-	
+	add->Multiply(off);
+
 	Float_t integral = add->Integral();
 	if ( bestIntegral < integral){
 	  bestIntegral = integral;
@@ -410,7 +567,9 @@ public:
       TH2F* add = new TH2F(*SRs->at(isr)->exclusionDownh);
       TH2F* mult = new TH2F(*SRs->at(isr)->exclusionDownh);
       mult->Multiply(excluded);
-      add->Add( mult, -1); cout<<SRs->at(isr)->id_SR<<" "<<add->Integral()<<endl;
+      add->Add( mult, -1); 
+      add->Multiply(off);
+      cout<<SRs->at(isr)->id_SR<<" "<<add->Integral()<<endl;
       excluded->Add(add);
     }
     
@@ -455,10 +614,14 @@ int bestFOM(){
   inTree->SetBranchAddress( "drlbgCut", &sr->drlbgCut);
   inTree->SetBranchAddress( "chi2Cut", &sr->chi2Cut);
   inTree->SetBranchAddress( "metCut", &sr->metCut);
+  inTree->SetBranchAddress( "m3Cut", &sr->m3Cut);
+  inTree->SetBranchAddress( "centralityCut", &sr->centralityCut);
+  inTree->SetBranchAddress( "mlbCut", &sr->mlbCut);
 
   inTree->SetBranchAddress( "tt", &sr->tth);
   inTree->SetBranchAddress( "tb", &sr->tbh);
   inTree->SetBranchAddress( "bb", &sr->bbh);
+  inTree->SetBranchAddress( "sig_tot", &sr->sig_toth);
 
   inTree->SetBranchAddress(  "diLep", &sr->bkg[0]);
   inTree->SetBranchAddress( "oneLep", &sr->bkg[1]);
@@ -486,18 +649,13 @@ int bestFOM(){
   }
 
   TFile* outFile = new TFile( "Optimization-Coverage.root","RECREATE");
-  SRs->nBest = 4;
-  SRs->Sort(0.5);
-
-  SRs->nBest = 2;
-  SRs->AddSort(0.25, 4);
-  
-  SRs->nBest = 2;
-  SRs->AddSort(0.75, 6);
-
+  SRs->nBest = 3;
+  SRs->SortOn(0.5);
+  SRs->nBest = 3;
+  SRs->AddSortOff(0.5,3);
 
   for (int ibr = 0; ibr < 3; ibr++){    
-    for (int isr=0; isr< 8; isr++){
+    for (int isr=0; isr< 6; isr++){
       SRs->at(isr)->BR = BRs[ibr];
 
       SRs->at(isr)->sig();
@@ -511,8 +669,10 @@ int bestFOM(){
     }
   }
 
-  SRs->nBest = 5;
-  SRs->Sort(1.0);
+  SRs->nBest = 3;
+  SRs->SortOn(1.0);
+  SRs->nBest = 2;
+  SRs->AddSortOff(1.0, 3);
   
   for (int ibr = 3; ibr < 4; ibr++){    
     for (int isr=0; isr< 5; isr++){
@@ -531,128 +691,6 @@ int bestFOM(){
   
   inFile->Close();
   outFile->Close();
-
-
-
-
-  
-
-
-  /*
-  std::vector<SR*>* bestSRs[4] = {};
-
-  for (int isr=0; isr< (int) SRs->size(); isr++){
-    SRs->at(isr)->BR = BRs[1];  
-    SRs->at(isr)->ExclusionDown();
-  }
-   
-  TH2F* excluded = new TH2F(*SRs->at(0)->exclusionDownh);
-  excluded->Clear();
-
-  for (int isr=0; (isr < 3) && (isr < (int) SRs->size()); isr++){
-    
-
-
-    sort(SRs->begin(), SRs->end(), sortByIntegral);
-
-    
-
-
-
-
-    for (int jsr=0; jsr< (int) SRs->size(); jsr++){
-      
-      
-  
-
-
-
-
-  std::vector<Exclusion*> sortingExcl = excl;
-  
-  for ( int iexcl = 0; (iexcl < 3) && iexcl < (int) excl.size(); iexcl++){
-    for ( int jexcl = 0; jexcl < (int) sortingExcl.size(); jexcl++){
-      if ((int) bestExcl.size() != 0) {
-	TH2F* mult = new TH2F(*sortingExcl.at(jexcl)->excl);
-	mult->Multiply(bestExcl.back()->excl);
-	
-	sortingExcl.at(jexcl)->excl->Add( mult, -1.);
-      }
-    }
-    
-    sort(sortingExcl.begin(), sortingExcl.end(), sortByIntegral);
-    for ( int jexcl = 0; jexcl < (int) excl.size(); jexcl++){
-      if ( sortingExcl.front()->name->CompareTo( *excl.at(jexcl)->name) == 0)
-	bestExcl.push_back(excl.at(jexcl));
-    }
-    sortingExcl.erase(sortingExcl.begin());
-  }
-
-  BRdir = inFile->GetDirectory("0.25");
-
-  excl.clear();
-  next = TIter(BRdir->GetListOfKeys());
-  while ((key = (TKey*)next())) {
-    TClass *cl = gROOT->GetClass(key->GetClassName());
-    if (!cl->InheritsFrom("TDirectory")) continue;
-
-    TDirectory* SRdir = BRdir->GetDirectory(key->GetName());
-
-    excl.push_back(new Exclusion());
-    SRdir->GetObject( exclusionPlot, excl.back()->excl);
-    excl.back()->name = new TString(key->GetName());
-  }
-  sortingExcl = excl;
-  
-  for ( int iexcl = 0; iexcl < (int) bestExcl.size(); iexcl++){
-    for ( int jexcl = 0; jexcl < (int) sortingExcl.size(); jexcl++){
-      if ( bestExcl.at(iexcl)->name->CompareTo( *sortingExcl.at(jexcl)->name) == 0){
-	
-	for ( int kexcl = 0; kexcl < (int) sortingExcl.size(); kexcl++){
-	  TH2F* mult = new TH2F(*sortingExcl.at(kexcl)->excl);
-	  mult->Multiply(sortingExcl.at(jexcl)->excl);
-	
-	  sortingExcl.at(kexcl)->excl->Add( mult, -1.);
-	}
-
-	break;
-      }
-    }
-  }
-
-  for ( int iexcl = 0; (iexcl < 2) && iexcl < (int) excl.size(); iexcl++){
-    for ( int jexcl = 0; jexcl < (int) sortingExcl.size(); jexcl++){
-      if (iexcl != 0) {
-	TH2F* mult = new TH2F(*sortingExcl.at(jexcl)->excl);
-	mult->Multiply(bestExcl.back()->excl);
-	
-	sortingExcl.at(jexcl)->excl->Add( mult, -1.);
-      }
-    }
-    
-    sort(sortingExcl.begin(), sortingExcl.end(), sortByIntegral);
-    for ( int jexcl = 0; jexcl < (int) excl.size(); jexcl++){
-      if ( sortingExcl.front()->name->CompareTo( *excl.at(jexcl)->name) == 0)
-	bestExcl.push_back(excl.at(jexcl));
-    }
-    sortingExcl.erase(sortingExcl.begin());
-  }
-  
-  inFile
-
-
-  for ( int iexcl = 0; iexcl < (int) bestExcl.size(); iexcl++){
-    Int_t id bestExcl.at(iexcl)->name->Atoi()<<endl;
-
-
-    
-
-
-
-  }
-  
-  */
-
 
   return 0;
 }

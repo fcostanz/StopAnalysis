@@ -138,13 +138,13 @@ public:
     Float_t tmp = sigma2_sig() / sig() / sig();
 
     for (int ibkg = 0; ibkg < 1; ibkg++)
-      tmp += pow( FOM() / sig(), 4.) / 4. * bkg2[ibkg] * pow( 1 + 2 * sys[ibkg] * sys[ibkg] * bkg[ibkg], 2.);
+      tmp += pow( (double)FOM() / sig(), 4.) / 4. * bkg2[ibkg] * pow( 1. + 2. * sys[ibkg] * sys[ibkg] * bkg[ibkg], 2.);
     
     return tmp;
   }
 
   void Print() const {
-    cout<<"OUT SRs.push_back("<<Ntry<<"); "<<name->Data()<<": "<<FOM()<<" +- " << sqrt( epsilon2_FOM() ) * FOM();
+    cout<<"OUT "<<Ntry<<" SRs.push_back("<<Ntry<<"); "<<name->Data()<<": "<<FOM()<<" +- " << sqrt( epsilon2_FOM() ) * FOM();
     cout<<"; sig="<<sig()<<" +- "<<sqrt(sigma2_sig())<<"; bkg="<<bkg_tot()<<"; 1Lep="<<bkg[1]/bkg_tot()*100<<"%; rare="<<bkg[3]/bkg_tot() * 100<<"%";
     cout<<endl;
 
@@ -197,9 +197,12 @@ int bestFOM( int iSample = 0, Float_t BR = 0.50){
   Float_t dphiCut = 0.;
   Float_t chi2Cut = 0.;
   Float_t drlblCut = 0.;
-
   Float_t drlbgCut = 0.;
   Float_t metCut = 0.;
+  Float_t m3Cut = 0.;
+  Float_t centralityCut = 0.;
+  Float_t mlbCut = 0.;
+
 
   tree[0]->SetBranchAddress( "tt", &sr->tt);
   tree[0]->SetBranchAddress( "tb", &sr->tb);
@@ -219,6 +222,9 @@ int bestFOM( int iSample = 0, Float_t BR = 0.50){
   tree[0]->SetBranchAddress( "drlbgCut", &drlbgCut);
   tree[0]->SetBranchAddress( "chi2Cut", &chi2Cut);
   tree[0]->SetBranchAddress( "metCut", &metCut);
+  tree[0]->SetBranchAddress( "m3Cut", &m3Cut);
+  tree[0]->SetBranchAddress( "centralityCut", &centralityCut);
+  tree[0]->SetBranchAddress( "mlbCut", &mlbCut);
 
   for (int ibkg = 0; ibkg < 4; ibkg++){
     tree[ibkg+1]->SetBranchAddress( "tt", &sr->bkg[ibkg]);
@@ -237,8 +243,12 @@ int bestFOM( int iSample = 0, Float_t BR = 0.50){
  
     sr->Ntry = ievt;
     
+    if ( BR <= 0.5)
+      if (nJetCut > 4) continue;
+
     if(sr->sig()<4.) continue;
-    if(sqrt(sr->epsilon2_FOM() > 0.3)) continue;
+    if(sr->bkg_tot()<1.2) continue;
+    if(sqrt(sr->epsilon2_FOM()) > 0.4) continue;
     if(sr->FOM() - sqrt(sr->epsilon2_FOM()) < 1.) continue;
     if(sr->bkg[1]/sr->bkg_tot() > 0.35) continue;
     if(sr->bkg[3]/sr->bkg_tot() > 0.25) continue;
@@ -261,6 +271,9 @@ int bestFOM( int iSample = 0, Float_t BR = 0.50){
   Float_t drlbgCut0 = drlbgCut;
   Float_t chi2Cut0 = chi2Cut;
   Float_t metCut0 = metCut;
+  Float_t m3Cut0 = m3Cut;
+  Float_t centralityCut0 =  centralityCut;
+  Float_t mlbCut0 = mlbCut;
 
   TString sigFileName = "./Signals/"; sigFileName += sample; sigFileName += ".root";
   
@@ -289,6 +302,9 @@ int bestFOM( int iSample = 0, Float_t BR = 0.50){
   Float_t drlb1 = 0.;
   Float_t hadChi2 = 0.;
   Float_t phiCorrMet = 0.;
+  Float_t m3 = 0.;
+  Float_t centrality = 0.;
+  Float_t mlb = 0.;
 
   Float_t mStop = 0.;
   Float_t mLSP = 0.;
@@ -317,6 +333,9 @@ int bestFOM( int iSample = 0, Float_t BR = 0.50){
   sigTree->SetBranchAddress( "drlb1", &drlb1);
   sigTree->SetBranchAddress( "hadChi2", &hadChi2);
   sigTree->SetBranchAddress( "phiCorrMet", &phiCorrMet);
+  sigTree->SetBranchAddress( "m3", &m3);
+  sigTree->SetBranchAddress( "centrality", &centrality);
+  sigTree->SetBranchAddress( "mlb", &mlb);
 
   sigTree->SetBranchAddress("mStop",&mStop);
   sigTree->SetBranchAddress("mLSP",&mLSP);
@@ -365,11 +384,15 @@ int bestFOM( int iSample = 0, Float_t BR = 0.50){
       if (drlb1 < drlbgCut) continue; 
       if (hadChi2 > chi2Cut) continue;
       if (phiCorrMet < metCut) continue;
+      if (m3 < m3Cut) continue;
+      if (centrality < centralityCut) continue;
+      if (mlb > mlbCut) continue;
 
       if (!(mt < mtCut0) && !(njets < nJetCut0) && !(topness < topnessCut0)
 	  && !(mt2w < mt2wCut0) && !(y < yCut0) && !(dphimin < dphiCut0)
 	  && !(drlb1 > drlblCut0) && !(drlb1 < drlbgCut0) && !(hadChi2 > chi2Cut0)
-	  && !(phiCorrMet < metCut0) ) continue;
+	  && !(phiCorrMet < metCut0) && !(m3 < m3Cut0) && !(centrality < centralityCut0)
+	  && !(mlb > mlbCut0) ) continue;
       
       if (charginos == 0){
 	ttUnc  += weight;
