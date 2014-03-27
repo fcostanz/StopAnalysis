@@ -155,12 +155,12 @@ if __name__=='__main__':
 ##              t500n100=T2tt_t500n100_RA4bel_NoTail(SigOptions)
 ##              Sigsamples['1T2tt_t500n100']=[t500n100]
          if lep=="Combined":
-             #T2tb stop=550, LSP=1
-             t550n1=T2tb_mStop550mLSP1_STOP_NoTail(SigOptions)
-             Sigsamples['2T2tb-mStop550mLSP1']=[t550n1]
-             #T2tb stop=325, LSP=100
-             t325n100=T2tb_mStop325mLSP100_STOP_NoTail(SigOptions)
-             Sigsamples['1T2tb-mStop325mLSP100']=[t325n100]
+             #T2tb stop=550, LSP=1, br=50
+             t550n1b50=T2tb_mStop550mLSP1br50_STOP_NoTail(SigOptions)
+             Sigsamples['2T2tb-mStop550mLSP1br50']=[t550n1b50]
+             #T2tb stop=325, LSP=100, br=50
+             t325n100b50=T2tb_mStop325mLSP100br50_STOP_NoTail(SigOptions)
+             Sigsamples['1T2tb-mStop325mLSP100br50']=[t325n100b50]
               
          #===================================================
          #
@@ -178,8 +178,8 @@ if __name__=='__main__':
          MCsamples['02QCD'].append(TFile(QCD.RootFile,"READ"))
          MCsamples['01DrellYan'].append(TFile(DrellYan.RootFile,"READ"))         
          #MC Signal
-         Sigsamples['2T2tb-mStop550mLSP1'].append(TFile(str(t550n1.RootFile),"READ"))
-         Sigsamples['1T2tb-mStop325mLSP100'].append(TFile(str(t325n100.RootFile),"READ"))
+         Sigsamples['2T2tb-mStop550mLSP1br50'].append(TFile(str(t550n1b50.RootFile),"READ"))
+         Sigsamples['1T2tb-mStop325mLSP100br50'].append(TFile(str(t325n100b50.RootFile),"READ"))
          #Create the mcfiles dictionary for convencience
          #maps the name of the sample to the TFile
          mcfiles={}         
@@ -195,8 +195,8 @@ if __name__=='__main__':
          print 'DrellYan ',DrellYan.RootFile
 
          
-         print 'T2tb: m_stop = 550; m_LSP = 1',t550n1.RootFile
-         print 'T2tb: m_stop = 325; m_LSP = 100',t325n100.RootFile
+         print 'T2tb: m_stop = 550; m_LSP = 1',t550n1b50.RootFile
+         print 'T2tb: m_stop = 325; m_LSP = 100',t325n100b50.RootFile
          
          #raw_input()
 

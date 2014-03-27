@@ -113,43 +113,84 @@ def DrellYan_STOP_NoTail(options):
 #==========================================
 ##  Signal Samples
 #==========================================
-def T2tb_mStop175mLSP50_STOP_NoTail(options):
+def T2tb_mStop175mLSP50br50_STOP_NoTail(options):
 
     Samp=Sample()
     Samp.isData=False
     #
-    Samp.AddRootFile("T2tb-mStop175mLSP50/NoSub/T2tb-mStop175mLSP50_NoSub_STOP_NoTail.root")
+    Samp.AddRootFile("T2tb-mStop175mLSP50br50/NoSub/T2tb-mStop175mLSP50br50_NoSub_STOP_NoTail.root")
     #
     Samp.ReweightAndMerge(options)
     return Samp
 #==========================================
-def T2tb_mStop200mLSP25_STOP_NoTail(options):
+def T2tb_mStop175mLSP50br100_STOP_NoTail(options):
 
     Samp=Sample()
     Samp.isData=False
     #
-    Samp.AddRootFile("T2tb-mStop200mLSP25/NoSub/T2tb-mStop200mLSP25_NoSub_STOP_NoTail.root")
+    Samp.AddRootFile("T2tb-mStop175mLSP50br100/NoSub/T2tb-mStop175mLSP50br100_NoSub_STOP_NoTail.root")
     #
     Samp.ReweightAndMerge(options)
     return Samp
 #==========================================
-def T2tb_mStop325mLSP100_STOP_NoTail(options):
+def T2tb_mStop200mLSP25br50_STOP_NoTail(options):
 
     Samp=Sample()
     Samp.isData=False
     #
-    Samp.AddRootFile("T2tb-mStop325mLSP100/NoSub/T2tb-mStop325mLSP100_NoSub_STOP_NoTail.root")
+    Samp.AddRootFile("T2tb-mStop200mLSP25br50/NoSub/T2tb-mStop200mLSP25br50_NoSub_STOP_NoTail.root")
     #
     Samp.ReweightAndMerge(options)
     return Samp
 #==========================================
-def T2tb_mStop550mLSP1_STOP_NoTail(options):
+def T2tb_mStop200mLSP25br100_STOP_NoTail(options):
 
     Samp=Sample()
     Samp.isData=False
     #
-    Samp.AddRootFile("T2tb-mStop550mLSP1/NoSub/T2tb-mStop550mLSP1_NoSub_STOP_NoTail.root")
+    Samp.AddRootFile("T2tb-mStop200mLSP25br100/NoSub/T2tb-mStop200mLSP25br100_NoSub_STOP_NoTail.root")
     #
     Samp.ReweightAndMerge(options)
     return Samp
 #==========================================
+def T2tb_mStop325mLSP100br50_STOP_NoTail(options):
+
+    Samp=Sample()
+    Samp.isData=False
+    #
+    Samp.AddRootFile("T2tb-mStop325mLSP100br50/NoSub/T2tb-mStop325mLSP100br50_NoSub_STOP_NoTail.root")
+    #
+    Samp.ReweightAndMerge(options)
+    return Samp
+#==========================================
+def T2tb_mStop325mLSP100br100_STOP_NoTail(options):
+
+    Samp=Sample()
+    Samp.isData=False
+    #
+    Samp.AddRootFile("T2tb-mStop325mLSP100br100/NoSub/T2tb-mStop325mLSP100br100_NoSub_STOP_NoTail.root")
+    #
+    Samp.ReweightAndMerge(options)
+    return Samp
+#==========================================
+def T2tb_mStop550mLSP1br50_STOP_NoTail(options):
+
+    Samp=Sample()
+    Samp.isData=False
+    #
+    Samp.AddRootFile("T2tb-mStop550mLSP1br50/NoSub/T2tb-mStop550mLSP1br50_NoSub_STOP_NoTail.root")
+    #
+    Samp.ReweightAndMerge(options)
+    return Samp
+#==========================================
+def T2tb_mStop550mLSP1br100_STOP_NoTail(options):
+
+    Samp=Sample()
+    Samp.isData=False
+    #
+    Samp.AddRootFile("T2tb-mStop550mLSP1br100/NoSub/T2tb-mStop550mLSP1br100_NoSub_STOP_NoTail.root")
+    #
+    Samp.ReweightAndMerge(options)
+    return Samp
+#==========================================
+

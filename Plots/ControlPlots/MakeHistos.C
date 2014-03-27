@@ -6,15 +6,14 @@
 #include <iostream>
 #include <iomanip>
 
-typedef ROOT::Math::LorentzVector<ROOT::Math::PtEtaPhiE4D<double> >          LorentzED;
-using namespace ROOT::Math::VectorUtil;
 bool pcp = true;
+using namespace std;
 
 int MakeHistos(int iSample = 0){
   TH1::SetDefaultSumw2(true);
   if(pcp)cout<<"going to set inputs"<<endl;
     
-  TString mainDir = "/nfs/dust/cms/user/fcost/store/Bonsai/ControlPlots2/";
+  TString mainDir = "/home/fcostanz/Bonsai/ControlPlots/";
 
   const int NSamples = 11;  
   const int NSignals = 4;
@@ -116,6 +115,9 @@ int MakeHistos(int iSample = 0){
   Float_t phiCorrMet = 0.;
   
   Float_t ht = 0.;
+  Float_t ht3 = 0.;
+  Float_t ht4 = 0.;
+  Float_t ht5 = 0.;
   Float_t htRatio = 0.;
   Float_t meff = 0.;
   Float_t y = 0.;
@@ -124,6 +126,8 @@ int MakeHistos(int iSample = 0){
   Float_t mlb1 = 0.;
   Float_t mlb = 0.;
   Float_t m3b = 0.;
+  Float_t m3 = 0.;
+  Float_t centrality = 0.;  
   Float_t mt2w = 0.;
   Float_t hadChi2 = 0.;
   Float_t topness = 0.;
@@ -171,6 +175,9 @@ int MakeHistos(int iSample = 0){
   tree->SetBranchAddress( "phiCorrMet", &phiCorrMet);
   
   tree->SetBranchAddress( "ht", &ht);
+  tree->SetBranchAddress( "ht3", &ht3);
+  tree->SetBranchAddress( "ht4", &ht4);
+  tree->SetBranchAddress( "ht5", &ht5);
   tree->SetBranchAddress( "htRatio", &htRatio);
   tree->SetBranchAddress( "meff", &meff);
   tree->SetBranchAddress( "y", &y);
@@ -179,6 +186,8 @@ int MakeHistos(int iSample = 0){
   tree->SetBranchAddress( "mlb1", &mlb1);
   tree->SetBranchAddress( "mlb", &mlb);
   tree->SetBranchAddress( "m3b", &m3b);
+  tree->SetBranchAddress( "m3", &m3);
+  tree->SetBranchAddress( "centrality", &centrality);
   tree->SetBranchAddress( "mt2w", &mt2w);
   tree->SetBranchAddress( "hadChi2", &hadChi2);
   tree->SetBranchAddress( "topness", &topness);
@@ -202,7 +211,6 @@ int MakeHistos(int iSample = 0){
   ///////////////////////////////////////////////////// 
   TFile* outFile = new TFile( "./MakeHistos/"+sample[iSample]+".root", "RECREATE");
   outFile->cd();
-  TDirectory* controlDir[NDirs];
 
   TH1D* npvh[NDirs];
   TH1D* ngoodpvh[NDirs];
@@ -223,6 +231,9 @@ int MakeHistos(int iSample = 0){
   TH1D* bdiscHh[NDirs];
   
   TH1D* hth[NDirs];
+  TH1D* ht3h[NDirs];
+  TH1D* ht4h[NDirs];
+  TH1D* ht5h[NDirs];
   TH1D* htratioh[NDirs];
   TH1D* meth[NDirs];
   TH1D* meffh[NDirs];
@@ -232,6 +243,8 @@ int MakeHistos(int iSample = 0){
   TH1D* mlb1h[NDirs];
   TH1D* mlbh[NDirs];
   TH1D* m3bh[NDirs];
+  TH1D* m3h[NDirs];
+  TH1D* centralityh[NDirs];
   TH1D* mt2wh[NDirs];
   TH1D* hadchi2h[NDirs];
   TH1D* topnessh[NDirs];
@@ -265,6 +278,9 @@ int MakeHistos(int iSample = 0){
     meth[iDir] = new TH1D( "MET", "MET [GeV]", 25, 0., 500.);
     
     hth[iDir]      = new TH1D(   "Ht",   "Ht [GeV]",  40, 0., 1000.);
+    ht3h[iDir]     = new TH1D(   "Ht3",   "Ht3 [GeV]",  40, 0., 1000.);
+    ht4h[iDir]     = new TH1D(   "Ht4",   "Ht4 [GeV]",  40, 0., 1000.);
+    ht5h[iDir]     = new TH1D(   "Ht5",   "Ht5 [GeV]",  40, 0., 1000.);
     htratioh[iDir] = new TH1D(   "HtRatio",   "HtRatio",  20, 0., 1.);
     meffh[iDir]    = new TH1D( "Meff", "Meff [GeV]",  80, 0., 2000.);
     yh[iDir]       = new TH1D(    "Y",    "Y [GeV^{1/2}]",  30, 0.,   30.);
@@ -273,6 +289,8 @@ int MakeHistos(int iSample = 0){
     mlb1h[iDir]    = new TH1D(      "mlb1",     "Mlb1 [GeV]", 40, 0., 1000.);
     mlbh[iDir]     = new TH1D(  "mlb", "Mlb [GeV]", 40, 0., 1000.);
     m3bh[iDir]     = new TH1D(       "m3b",      "M3b [GeV]", 40, 0., 1000.);
+    m3h[iDir]      = new TH1D(        "m3",       "M3 [GeV]", 40, 0., 1000.);
+    centralityh[iDir] = new TH1D( "centrality", "centrality", 40, 0., 1.);
     mt2wh[iDir]    = new TH1D(      "mt2w",     "MT2W [GeV]", 40, 0.,  500.);
     hadchi2h[iDir] = new TH1D(      "hadChi2",     "hadChi2 [GeV]", 20, 0., 10.);
     topnessh[iDir] = new TH1D(      "topness",     "topness [GeV]", 30, -15., 15.);
@@ -342,6 +360,9 @@ int MakeHistos(int iSample = 0){
       meth[iDir]->Fill( phiCorrMet, weight);
       
       hth[iDir]->Fill( ht, weight);
+      ht3h[iDir]->Fill( ht3, weight);
+      ht4h[iDir]->Fill( ht4, weight);
+      ht5h[iDir]->Fill( ht5, weight);
       htratioh[iDir]->Fill( htRatio, weight);
       meffh[iDir]->Fill( meff, weight);
       yh[iDir]->Fill( y, weight);
@@ -350,6 +371,8 @@ int MakeHistos(int iSample = 0){
       mlb1h[iDir]->Fill( mlb1, weight);
       mlbh[iDir]->Fill( mlb, weight);
       m3bh[iDir]->Fill( m3b, weight);
+      m3h[iDir]->Fill( m3, weight);
+      centralityh[iDir]->Fill( centrality, weight);
       mt2wh[iDir]->Fill( mt2w, weight);
       hadchi2h[iDir]->Fill( hadChi2, weight);
       topnessh[iDir]->Fill( topness, weight);

@@ -5,10 +5,10 @@ rm -rf WJets/NoSub/
 rm -rf Rare/NoSub/
 rm -rf DrellYan/NoSub/
 rm -rf QCD/NoSub/
-rm -rf T2tb-mStop175mLSP50/NoSub/
-rm -rf T2tb-mStop200mLSP25/NoSub/
-rm -rf T2tb-mStop325mLSP100/NoSub/
-rm -rf T2tb-mStop550mLSP1/NoSub/
+rm -rf T2tb-mStop175mLSP50br50/NoSub/
+rm -rf T2tb-mStop200mLSP25br50/NoSub/
+rm -rf T2tb-mStop325mLSP100br50/NoSub/
+rm -rf T2tb-mStop550mLSP1br50/NoSub/
 
 mkdir -p Data/NoSub/
 mkdir -p DiLep/NoSub/
@@ -17,19 +17,19 @@ mkdir -p WJets/NoSub/
 mkdir -p Rare/NoSub/
 mkdir -p DrellYan/NoSub/
 mkdir -p QCD/NoSub/
-mkdir -p T2tb-mStop175mLSP50/NoSub/
-mkdir -p T2tb-mStop200mLSP25/NoSub/
-mkdir -p T2tb-mStop325mLSP100/NoSub/
-mkdir -p T2tb-mStop550mLSP1/NoSub/
+mkdir -p T2tb-mStop175mLSP50br50/NoSub/
+mkdir -p T2tb-mStop200mLSP25br50/NoSub/
+mkdir -p T2tb-mStop325mLSP100br50/NoSub/
+mkdir -p T2tb-mStop550mLSP1br50/NoSub/
 
 cp MakeHistos/Data.root Data/NoSub/Data_NoSub_STOP_NoTail.root
 cp MtPeakReweighting/DiLep.root DiLep/NoSub/DiLep_NoSub_STOP_NoTail.root
 cp MtPeakReweighting/OneLep.root OneLep/NoSub/OneLep_NoSub_STOP_NoTail.root
 cp MtPeakReweighting/WJets.root WJets/NoSub/WJets_NoSub_STOP_NoTail.root
 cp MtPeakReweighting/Rare.root Rare/NoSub/Rare_NoSub_STOP_NoTail.root
-cp MakeHistos/DrellYan.root DrellYan/NoSub/DrellYan_NoSub_STOP_NoTail.root
+cp MtPeakReweighting/DrellYan.root DrellYan/NoSub/DrellYan_NoSub_STOP_NoTail.root
 cp MakeHistos/QCD.root QCD/NoSub/QCD_NoSub_STOP_NoTail.root
-cp MakeHistos/T2tb-mStop175mLSP50.root T2tb-mStop175mLSP50/NoSub/T2tb-mStop175mLSP50_NoSub_STOP_NoTail.root
-cp MakeHistos/T2tb-mStop200mLSP25.root T2tb-mStop200mLSP25/NoSub/T2tb-mStop200mLSP25_NoSub_STOP_NoTail.root
-cp MakeHistos/T2tb-mStop325mLSP100.root T2tb-mStop325mLSP100/NoSub/T2tb-mStop325mLSP100_NoSub_STOP_NoTail.root
-cp MakeHistos/T2tb-mStop550mLSP1.root T2tb-mStop550mLSP1/NoSub/T2tb-mStop550mLSP1_NoSub_STOP_NoTail.root
+cp MakeHistos/T2tb-mStop175mLSP50.root T2tb-mStop175mLSP50br50/NoSub/T2tb-mStop175mLSP50br50_NoSub_STOP_NoTail.root
+cp MakeHistos/T2tb-mStop200mLSP25.root T2tb-mStop200mLSP25br50/NoSub/T2tb-mStop200mLSP25br50_NoSub_STOP_NoTail.root
+cp MakeHistos/T2tb-mStop325mLSP100.root T2tb-mStop325mLSP100br50/NoSub/T2tb-mStop325mLSP100br50_NoSub_STOP_NoTail.root
+cp MakeHistos/T2tb-mStop550mLSP1.root T2tb-mStop550mLSP1br50/NoSub/T2tb-mStop550mLSP1br50_NoSub_STOP_NoTail.root
