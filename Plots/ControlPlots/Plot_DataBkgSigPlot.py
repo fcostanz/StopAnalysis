@@ -33,7 +33,7 @@ class DataBkgSigPlot:
 
             #
 	#self.suffixList=[".gif", ".pdf", ".eps", ".C", ".root", ".png"]
-	self.suffixList=[".gif",".C"]
+	self.suffixList=[".gif",".root"]
         #
         #CREATE A PLOT
         exec('self.Plot='+self.plotClass+'(self.plotProperties)')

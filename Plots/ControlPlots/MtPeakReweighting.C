@@ -1,3 +1,4 @@
+#include "TROOT.h"
 #include "TH1D.h"
 #include "TTree.h"
 #include "TFile.h"
@@ -14,17 +15,18 @@ int MtPeakReweighting(){
   TH1::SetDefaultSumw2(true);
   if(pcp)cout<<"going to set inputs"<<endl;
     
-  const int NSamples = 5;  
+  const int NSamples = 6;  
   const int NControlRegions = 6;
   const int NLep = 2;
   const int NDir = NControlRegions * NLep;
 
-  TString sample[5];
+  TString sample[NSamples];
   sample[0] = "Data";
   sample[1] = "DiLep";
   sample[2] = "OneLep";
   sample[3] = "WJets";
   sample[4] = "Rare";
+  sample[5] = "DrellYan";
 
   bool lepFlag[NLep];
   TString lep[NLep];
@@ -44,15 +46,16 @@ int MtPeakReweighting(){
   Float_t oneLep = 0.;
   Float_t wJets = 0.;
   Float_t rare = 0.;
+  Float_t dy = 0.;
 
   Float_t SF[NSamples] = {};
 
   Int_t n1 = 0;
   Int_t n2 = 0;
 
-  TFile* inFile[5];
-  TFile* outFile[5];
-  TH1D* mth[5];
+  TFile* inFile[NSamples];
+  TFile* outFile[NSamples];
+  TH1D* mth[NSamples];
   for (int iSample = 0; iSample < NSamples; iSample++){
     TString inFileName = "./MakeHistos/"+sample[iSample]+".root";
     inFile[iSample]= new TFile( inFileName,"READ");
@@ -66,13 +69,8 @@ int MtPeakReweighting(){
     /////////////////////////////////////////////////////
     // Reweighting histos Preselection
     /////////////////////////////////////////////////////
-    SF[0] = 1.;
-    SF[1] = 1.;
-    SF[2] = 1.;
-    SF[3] = 1.;
-    SF[4] = 1.;    
-
     for (int iSample = 1; iSample < NSamples; iSample++){
+      SF[iSample] = 1.;
       TDirectory* inDir =  inFile[iSample]->GetDirectory(lep[ilep] + "-Preselection");
       TDirectory* outDir =  outFile[iSample]->mkdir(lep[ilep] + "-Preselection");
       outDir->cd();
@@ -94,6 +92,7 @@ int MtPeakReweighting(){
     // Reweighting histos SearchRegionPreIsoTrackVeto
     /////////////////////////////////////////////////////
     for (int iSample = 0; iSample < NSamples; iSample++){
+      SF[iSample] = 1.;
       TString histoName = lep[ilep]; histoName += "-SearchRegionPreIsoTrackVeto/Mt";
       inFile[iSample]->GetObject(histoName, mth[iSample]);
     }
@@ -106,12 +105,11 @@ int MtPeakReweighting(){
     oneLep = mth[2]->Integral( n1, n2);
     wJets = mth[3]->Integral( n1, n2);
     rare = mth[4]->Integral( n1, n2);
+    dy = mth[5]->Integral( n1, n2);
 
-    SF[0] = 1.;
     SF[1] = (data - rare) / (diLep + oneLep + wJets);
     SF[2] = SF[1];
     SF[3] = SF[1];
-    SF[4] = 1.;
     
     for (int iSample = 1; iSample < NSamples; iSample++){
       TDirectory* inDir =  inFile[iSample]->GetDirectory(lep[ilep] + "-SearchRegionPreIsoTrackVeto");
@@ -134,6 +132,7 @@ int MtPeakReweighting(){
     // Reweighting histos SearchRegionPostIsoTrackVeto
     /////////////////////////////////////////////////////
     for (int iSample = 0; iSample < NSamples; iSample++){
+      SF[iSample] = 1.;
       TString histoName = lep[ilep]; histoName += "-SearchRegionPostIsoTrackVeto/Mt";
       inFile[iSample]->GetObject(histoName, mth[iSample]);
     }
@@ -143,6 +142,7 @@ int MtPeakReweighting(){
     oneLep = mth[2]->Integral( n1, n2);
     wJets = mth[3]->Integral( n1, n2);
     rare = mth[4]->Integral( n1, n2);
+    dy = mth[5]->Integral( n1, n2);
 
     SF[2] = (data - SF[1] * diLep - rare) / (oneLep + wJets);
     SF[3] = SF[2];
@@ -168,6 +168,7 @@ int MtPeakReweighting(){
     // Reweighting histos CR1
     /////////////////////////////////////////////////////
     for (int iSample = 0; iSample < NSamples; iSample++){
+      SF[iSample] = 1.;
       TString histoName = lep[ilep]; histoName += "-CR1/Mt";
       inFile[iSample]->GetObject(histoName, mth[iSample]);
     }
@@ -177,12 +178,10 @@ int MtPeakReweighting(){
     oneLep = mth[2]->Integral( n1, n2);
     wJets = mth[3]->Integral( n1, n2);
     rare = mth[4]->Integral( n1, n2);
+    dy =  mth[5]->Integral( n1, n2);
 
-    SF[0] = 1.;
-    SF[1] = 1.;
     SF[2] = (data - diLep - rare) / (oneLep + wJets);
     SF[3] = SF[2];
-    SF[4] = 1.;
 
     for (int iSample = 1; iSample < NSamples; iSample++){
       TDirectory* inDir =  inFile[iSample]->GetDirectory(lep[ilep] + "-CR1");
@@ -205,6 +204,7 @@ int MtPeakReweighting(){
     // Reweighting histos CR4
     /////////////////////////////////////////////////////
     for (int iSample = 0; iSample < NSamples; iSample++){
+      SF[iSample] = 1.;
       TString histoName = lep[ilep]; histoName += "-CR4/Mt";
       inFile[iSample]->GetObject(histoName, mth[iSample]);
     }
@@ -214,12 +214,10 @@ int MtPeakReweighting(){
     oneLep = mth[2]->Integral( n1, n2);
     wJets = mth[3]->Integral( n1, n2);
     rare = mth[4]->Integral( n1, n2);
+    dy = mth[5]->Integral( n1, n2);
 
-    SF[0] = 1.;
-    SF[1] = (data - oneLep - wJets - rare) / (diLep);
-    SF[2] = 1.;
-    SF[3] = 1.;
-    SF[4] = 1.;
+    SF[1] = (data - oneLep - wJets - rare - dy) / (diLep);
+    cout<<SF[1]<<endl;
 
     for (int iSample = 1; iSample < NSamples; iSample++){
       TDirectory* inDir =  inFile[iSample]->GetDirectory(lep[ilep] + "-CR4");
@@ -242,6 +240,7 @@ int MtPeakReweighting(){
     // Reweighting histos CR5
     /////////////////////////////////////////////////////
     for (int iSample = 0; iSample < NSamples; iSample++){
+      SF[iSample] = 1.;
       TString histoName = lep[ilep]; histoName += "-CR5/Mt";
       inFile[iSample]->GetObject(histoName, mth[iSample]);
     }
@@ -251,12 +250,9 @@ int MtPeakReweighting(){
     oneLep = mth[2]->Integral( n1, n2);
     wJets = mth[3]->Integral( n1, n2);
     rare = mth[4]->Integral( n1, n2);
+    dy = mth[5]->Integral( n1, n2);
 
-    SF[0] = 1.;
-    SF[1] = (data - oneLep - wJets - rare) / (diLep);
-    SF[2] = 1.;
-    SF[3] = 1.;
-    SF[4] = 1.;
+    SF[1] = (data - oneLep - wJets - rare - dy) / (diLep);
 
     for (int iSample = 1; iSample < NSamples; iSample++){
       TDirectory* inDir =  inFile[iSample]->GetDirectory(lep[ilep] + "-CR5");
@@ -275,6 +271,8 @@ int MtPeakReweighting(){
       }
     }
   }
+
+
   for (int iSample = 1; iSample < NSamples; iSample++){
     outFile[iSample]->Write();    
     outFile[iSample]->Close();
