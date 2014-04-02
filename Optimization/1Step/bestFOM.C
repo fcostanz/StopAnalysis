@@ -158,7 +158,9 @@ int bestFOM( int iSample = 0, Float_t BR = 0.50){
   
   TH1::SetDefaultSumw2(true);
   if(pcp)cout<<"going to set inputs"<<endl;
-    
+
+  TString mainDir = "/nfs/dust/cms/user/fcost/store/Bonsai/Optimization/";
+
   const int NSamples = 15;
   
   Float_t mStop0[NSamples] = { 150., 250., 325., 175., 250., 325., 375., 225., 300., 450., 550., 200., 400., 600., 650.};  
@@ -187,7 +189,7 @@ int bestFOM( int iSample = 0, Float_t BR = 0.50){
     tree[i]= (TTree*)inFile[i]->Get("Optimization");
 
   int count = 0;
-  cout<<"here "<<count<<endl; count++;
+  //cout<<"here "<<count<<endl; count++;
 
   Float_t mtCut = 0.;
   Float_t nJetCut = 0.;
@@ -247,7 +249,7 @@ int bestFOM( int iSample = 0, Float_t BR = 0.50){
       if (nJetCut > 4) continue;
 
     if(sr->sig()<4.) continue;
-    if(sr->bkg_tot()<1.2) continue;
+    if(sr->bkg_tot()<1.8) continue;
     if(sqrt(sr->epsilon2_FOM()) > 0.4) continue;
     if(sr->FOM() - sqrt(sr->epsilon2_FOM()) < 1.) continue;
     if(sr->bkg[1]/sr->bkg_tot() > 0.35) continue;
@@ -275,7 +277,7 @@ int bestFOM( int iSample = 0, Float_t BR = 0.50){
   Float_t centralityCut0 =  centralityCut;
   Float_t mlbCut0 = mlbCut;
 
-  TString sigFileName = "./Signals/"; sigFileName += sample; sigFileName += ".root";
+  TString sigFileName = mainDir; sigFileName += sample; sigFileName += ".root";
   
   TFile* sigFile = new TFile(sigFileName,"READ");
   if (!sigFile->IsOpen()){

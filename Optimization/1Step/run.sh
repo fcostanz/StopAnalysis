@@ -4,7 +4,7 @@ do
     root -l -q 'MakeSignals.C+('$i')'
 done
 
-for ((i=0; i<19; i++))
+for ((i=0; i<0; i++))
 do
     root -l -q 'MakeTree.C+('$i')'
 done

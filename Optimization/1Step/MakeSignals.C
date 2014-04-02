@@ -13,7 +13,7 @@ int MakeSignals( int iSample = 0){
   TH1::SetDefaultSumw2(true);
   if(pcp)cout<<"going to set inputs"<<endl;
     
-  TString mainDir = "/home/fcostanz/Bonsai/Optimization/";
+  TString mainDir = "/nfs/dust/cms/user/fcost/store/Bonsai/Optimization/";
 
   const int NSignals = 15;    
   
