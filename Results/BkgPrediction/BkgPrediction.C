@@ -701,20 +701,20 @@ int BkgPrediction(){
       tree[ilep]->Branch( TString("sr") + sample[iSample] + TString("Corr") , &srCorr[iSample]);
       tree[ilep]->Branch( TString("sr") + sample[iSample] + TString("CorrErr") , &srCorrErr[iSample]);   
     }   
-    tree[ilep]->Branch( "preAllBkg", &pre[NSamples + 1]);
-    tree[ilep]->Branch( "preAllBkgErr", &preErr[NSamples + 1]);
-    tree[ilep]->Branch( "preAllBkgCorr", &preCorr[NSamples + 1]);
-    tree[ilep]->Branch( "preAllBkgCorrErr", &preCorrErr[NSamples + 1]);
+    tree[ilep]->Branch( "preAllBkg", &pre[NSamples]);
+    tree[ilep]->Branch( "preAllBkgErr", &preErr[NSamples]);
+    tree[ilep]->Branch( "preAllBkgCorr", &preCorr[NSamples]);
+    tree[ilep]->Branch( "preAllBkgCorrErr", &preCorrErr[NSamples]);
 
-    tree[ilep]->Branch( "postAllBkg", &post[NSamples + 1]);
-    tree[ilep]->Branch( "postAllBkgErr", &postErr[NSamples + 1]);
-    tree[ilep]->Branch( "postAllBkgCorr", &postCorr[NSamples + 1]);
-    tree[ilep]->Branch( "postAllBkgCorrErr", &postCorrErr[NSamples + 1]);
+    tree[ilep]->Branch( "postAllBkg", &post[NSamples]);
+    tree[ilep]->Branch( "postAllBkgErr", &postErr[NSamples]);
+    tree[ilep]->Branch( "postAllBkgCorr", &postCorr[NSamples]);
+    tree[ilep]->Branch( "postAllBkgCorrErr", &postCorrErr[NSamples]);
 
-    tree[ilep]->Branch( "srAllMC", &sr[NSamples + 1]);
-    tree[ilep]->Branch( "srAllMC", &srErr[NSamples + 1]);    
-    tree[ilep]->Branch( "srAllMCCorr", &srCorr[NSamples + 1]);
-    tree[ilep]->Branch( "srAllMCCorrErr", &srCorrErr[NSamples + 1]);
+    tree[ilep]->Branch( "srAllBkg", &sr[NSamples]);
+    tree[ilep]->Branch( "srAllBkg", &srErr[NSamples]);    
+    tree[ilep]->Branch( "srAllBkgCorr", &srCorr[NSamples]);
+    tree[ilep]->Branch( "srAllBkgCorrErr", &srCorrErr[NSamples]);
 
     tree[ilep]->Branch( "SFPre", &SFPre);
     tree[ilep]->Branch( "SFPreErr", &SFPreErr);
