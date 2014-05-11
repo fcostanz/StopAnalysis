@@ -232,10 +232,17 @@ int CR1(){
       ///////////////////////////////////////////
 
       peakSFh[3]->Add(peakh[0]);
-      peakSFh[3]->Add(peakh[1], -1.); 
-      peakSFh[3]->Add(peakh[2], -1.);
+      //peakSFh[3]->Add(peakh[1], -1.); 
+      //peakSFh[3]->Add(peakh[2], -1.);
       peakSFh[3]->Add(peakh[4], -1.); 
-      peakSFh[3]->Divide(peakh[3]);
+
+
+      tmph->Clear(); tmph->Reset();
+      tmph->Add(peakh[1]);
+      tmph->Add(peakh[2]);
+      tmph->Add(peakh[3]);
+      //peakSFh[3]->Divide(peakh[3]);
+      peakSFh[3]->Divide(tmph);
 
       peakSF = peakSFh[3]->GetBinContent(1);
       peakSFErr = peakSFh[3]->GetBinError(1);
