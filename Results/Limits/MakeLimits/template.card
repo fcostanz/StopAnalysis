@@ -1,0 +1,11 @@
+mass = 400 
+imax   1  number of channels 
+jmax   1  number of backgrounds 
+kmax   2  number of nuisance parameters 
+Observation $OBSERVATION
+bin     	1		1
+process    	Sig		Bkg
+process		0		1
+rate 		$SIG_		$BKG_
+1  lnN  	$SIGC_		1.0
+2  lnN  	1.0		$BKGC_
