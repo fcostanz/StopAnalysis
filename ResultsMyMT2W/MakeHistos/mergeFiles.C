@@ -96,7 +96,7 @@ void mergeFiles(int iSample = 0) {
     CopyFile(inFileName);
     }*/
 
-  for (int iSR = 0; iSR < 12; iSR++){
+  for (int iSR = 0; iSR < 14; iSR++){
     TString inFileName = ""; inFileName += iSR; inFileName += "/"; inFileName += fileName;
     CopyFile(inFileName);
   }

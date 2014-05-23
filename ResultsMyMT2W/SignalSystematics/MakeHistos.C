@@ -27,30 +27,31 @@ int MakeHistos(Int_t mySR){
   TFile* srFile = new TFile( "../SearchRegions/SearchRegions.root", "READ"); 
   TTree* srTree;  
   srFile->GetObject( "SearchRegions", srTree);
-
+  
   Int_t ID = 0;
   Float_t nJetCut = 0.;
   Float_t mtCut = 0.;
   Float_t dphiCut = 0.;
-  Float_t centralityCut = 0.;
+  Float_t hadChi2Cut = 0.;
   Float_t metCut = 0.;
+  Float_t mt2wCut = 0.;
+  Float_t centralityCut = 0.;
   Float_t yCut = 0.;
   Float_t mlbCut = 0.;
   Float_t m3Cut = 0.;
-  Float_t mt2wCut = 0.;
   Float_t drlblCut = 10.;
 
   srTree->SetBranchAddress( "ID", &ID);
   srTree->SetBranchAddress( "nJetCut", &nJetCut);
   srTree->SetBranchAddress( "mtCut", &mtCut);
   srTree->SetBranchAddress( "dphiCut", &dphiCut);
-  srTree->SetBranchAddress( "centralityCut", &centralityCut);
+  srTree->SetBranchAddress( "hadChi2Cut", &hadChi2Cut);
   srTree->SetBranchAddress( "metCut", &metCut);
+  srTree->SetBranchAddress( "mt2wCut", &mt2wCut);
+  srTree->SetBranchAddress( "centralityCut", &centralityCut);
   srTree->SetBranchAddress( "yCut", &yCut);
   srTree->SetBranchAddress( "mlbCut", &mlbCut);
   srTree->SetBranchAddress( "m3Cut", &m3Cut);
-  srTree->SetBranchAddress( "mt2wCut", &mt2wCut);
-
 
   Float_t lumi=19500.;
   Float_t weight = 1.;
@@ -208,19 +209,25 @@ int MakeHistos(Int_t mySR){
     /////////////////////////////////////////////////////
     //  Event Loop
     ///////////////////////////////////////////////////// 
+
     srTree->GetEntry(mySR);
+    mt2wCut -= 0.001;
 
     cout<<endl;
-    cout<<"SR id "<<ID<<" "<<endl;       
-    cout<<"mtCut = "<<mtCut<<endl;
-    cout<<"nJetCut = "<<nJetCut<<endl;
-    cout<<"mt2wCut = "<<mt2wCut<<endl;
-    cout<<"yCut = "<<yCut<<endl;
-    cout<<"dphiCut = "<<dphiCut<<endl;
-    cout<<"metCut = "<<metCut<<endl;
-    cout<<"m3Cut = "<<mlbCut<<endl;
-    cout<<"centralityCut = "<<centralityCut<<endl;
-    cout<<"mlbCut = "<<mlbCut<<endl;
+    cout<<"ID = "<<ID<<";"<<endl;    
+    cout<<"nJetCut = "<<nJetCut<<";"<<endl;
+    cout<<"mtCut = "<<mtCut<<";"<<endl;
+    cout<<"dphiCut = "<<dphiCut<<";"<<endl;
+    cout<<"hadChi2Cut = "<<hadChi2Cut<<";"<<endl;
+    cout<<"metCut = "<<metCut<<";"<<endl;
+    cout<<"mt2wCut = "<<mt2wCut<<";"<<endl;
+    cout<<"centralityCut = "<<centralityCut<<";"<<endl;
+    cout<<"yCut = "<<yCut<<";"<<endl;
+    cout<<"mlbCut = "<<mlbCut<<";"<<endl;
+    cout<<"m3Cut = "<<m3Cut<<";"<<endl;
+    cout<<"mt2wCut = "<<mt2wCut<<";"<<endl;
+    
+    srTree->GetEntry(mySR);
     
     tt->Reset();
     ttl->Reset();
@@ -244,6 +251,7 @@ int MakeHistos(Int_t mySR){
       if (mt < mtCut) continue;
       if (njets < nJetCut) continue;
       if (mt2w < mt2wCut) continue;
+      if (hadChi2 > hadChi2Cut) continue;
       if (y < yCut) continue;
       if (dphimin < dphiCut) continue; 
       if (phiCorrMet < metCut) continue;

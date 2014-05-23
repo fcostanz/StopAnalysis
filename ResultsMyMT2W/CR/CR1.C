@@ -371,15 +371,15 @@ int CR1(){
 
       RW = RWh->GetBinContent(1);
       RWErr = RWh->GetBinError(1);
-      RWCorr = 1. * RW;
-      RWCorrErr = 1. * RWErr;
+      RWCorr = 1.2 * RW;
+      RWCorrErr = 1.2 * RWErr;
       
       RTop = RToph->GetBinContent(1);
       RTopErr = RToph->GetBinError(1);
-      RTopPes = RWh->GetBinContent(1) * 1.;
-      RTopPesErr = RWh->GetBinError(1) * 1.;
-      RTopOpt = RToph->GetBinContent(1) * 1.;
-      RTopOptErr = RToph->GetBinError(1) * 1.;
+      RTopPes = RWh->GetBinContent(1) * 1.2;
+      RTopPesErr = RWh->GetBinError(1) * 1.2;
+      RTopOpt = RToph->GetBinContent(1) * 1.2;
+      RTopOptErr = RToph->GetBinError(1) * 1.2;
       RTopComb = (RTopOpt + RTopPes) /2.;
       RTopCombErr = fabs(RTopOpt - RTopPes) / 2.;
       RTopCombErr = sqrt(RTopCombErr * RTopCombErr + (RTopOptErr - RTopPesErr) * (RTopOptErr - RTopPesErr) / 4.);

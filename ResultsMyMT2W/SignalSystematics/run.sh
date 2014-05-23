@@ -1,4 +1,4 @@
-for SR in 0 1 2 3 4 5 6 7
+for ((SR=0; SR<9; SR++))
   do
   rm -f script${SR}.sh
   touch script${SR}.sh

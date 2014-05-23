@@ -33,57 +33,6 @@ int SearchRegions(){
   outTree->Branch( "mlbCut", &mlbCut);
   outTree->Branch( "m3Cut", &m3Cut);
 
-  ID = 51849;
-  nJetCut = 3;
-  mtCut = 120;
-  dphiCut = 0.8;
-  hadChi2Cut = 1e+09;
-  centralityCut = -1;
-  metCut = 150;
-  yCut = 8;
-  mlbCut = 1e+09;
-  m3Cut = 250;
-  mt2wCut = 200;
-  outTree->Fill();
-  
-  ID = 52812;
-  nJetCut = 3;
-  mtCut = 120;
-  dphiCut = 0.8;
-  centralityCut = -1;
-  metCut = 150;
-  yCut = 10;
-  mlbCut = 1e+09;
-  m3Cut = 0;
-  mt2wCut = 200;
-  outTree->Fill();
-  
-  ID = 5;
-  nJetCut = 4;
-  mtCut = 120;
-  dphiCut = 0.8;
-  hadChi2Cut = 5.;
-  metCut = 200.;  
-  mt2wCut = 200.;
-  centralityCut = 0.6;
-  yCut = 0;
-  mlbCut = 1e+09;
-  m3Cut = -2.;
-  outTree->Fill();
-
-  ID = 98868;
-  nJetCut = 3;
-  mtCut = 120;
-  dphiCut = 1;
-  hadChi2Cut = 1e+09;
-  centralityCut = 0.7;  // 0.6
-  metCut = 300;
-  yCut = 10;
-  mlbCut = 1e+09;
-  m3Cut = 0.;
-  mt2wCut = 200;
-  outTree->Fill();
-
   ID = 62219;
   nJetCut = 4;
   mtCut = 120;
@@ -110,13 +59,77 @@ int SearchRegions(){
   mt2wCut = 0;
   outTree->Fill();
 
-  ID = 68727;
+  ID = 51849;
+  nJetCut = 3;
+  mtCut = 120;
+  dphiCut = 0.8;
+  hadChi2Cut = 1e+09;
+  centralityCut = -1;
+  metCut = 150;
+  yCut = 8;
+  mlbCut = 1e+09;
+  m3Cut = 250; 
+  mt2wCut = 200;
+  outTree->Fill();
+  
+  ID = 4;
   nJetCut = 4;
+  mtCut = 120;
+  dphiCut = 1.;
+  hadChi2Cut = 5.;
+  metCut = 150.;  
+  mt2wCut = 200.;
+  centralityCut = 0.7;
+  yCut = 0;
+  mlbCut = 1e+09;
+  m3Cut = -2.;
+  outTree->Fill();
+
+  ID = 98872;
+  nJetCut = 3;  
   mtCut = 120;
   dphiCut = 1;
   hadChi2Cut = 1e+09;
-  centralityCut = 0.7;// 0.6
+  centralityCut = 0.7;
   metCut = 250;
+  yCut = 10;
+  mlbCut = 1e+09;
+  m3Cut = 0.;
+  mt2wCut = 200;
+  outTree->Fill();
+
+  ID = 98868;
+  nJetCut = 3;
+  mtCut = 120;
+  dphiCut = 1;
+  hadChi2Cut = 1e+09;
+  centralityCut = 0.7;
+  metCut = 300;
+  yCut = 10;
+  mlbCut = 1e+09;
+  m3Cut = 0.;
+  mt2wCut = 200;
+  outTree->Fill();
+
+  ID = 68727;
+  nJetCut = 4;
+  mtCut = 120;  
+  dphiCut = 1;
+  hadChi2Cut = 1e+09;
+  centralityCut = 0.7;
+  metCut = 250;
+  yCut = 10;
+  mlbCut = 1e+09;
+  m3Cut = 0;
+  mt2wCut = 200;
+  outTree->Fill();
+  
+  ID = 52812;
+  nJetCut = 3;
+  mtCut = 120;
+  dphiCut = 0.8;
+  centralityCut = -1;
+  metCut = 150;
   yCut = 10;
   mlbCut = 1e+09;
   m3Cut = 0;
@@ -128,21 +141,21 @@ int SearchRegions(){
   mtCut = 120;
   dphiCut = 1;
   hadChi2Cut = 1e+09;
-  centralityCut = 0.7;// 0.6
+  centralityCut = 0.7;
   metCut = 300;
   yCut = 10;
   mlbCut = 1e+09;
   m3Cut = 0;
   mt2wCut = 200;
   outTree->Fill();
-
+  
   ID = 10;
   nJetCut = 4;
   mtCut = 120;
   dphiCut = -1.;
   hadChi2Cut = 1e+09;
   centralityCut = -1.;
-  metCut = 150;
+  metCut = 100;
   yCut = 0;
   mlbCut = 1e+09;
   m3Cut = -2.;
@@ -150,14 +163,18 @@ int SearchRegions(){
   outTree->Fill();
 
   ID = 11;
-  metCut = 200;
+  metCut = 150;
   outTree->Fill();
 
   ID = 12;
-  metCut = 250;
+  metCut = 200;
   outTree->Fill();
 
   ID = 13;
+  metCut = 250;
+  outTree->Fill();
+
+  ID = 14;
   metCut = 300;
   outTree->Fill();
 

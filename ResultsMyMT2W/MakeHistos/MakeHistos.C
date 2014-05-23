@@ -392,16 +392,14 @@ int MakeHistos(int iSample = 0, int iSR = 6){
 
   for (int ievt=0;ievt<N;++ievt){    
     tree->GetEntry(ievt);
-
+    
     if (ievt%134563 == 0) cout<<"Event number "<<ievt<<"\r"<<flush;    
 
     if (iSample == 0 || iSample == 1) weight = 1.;           
     else weight = globalWeight * triggerWeight * puWeight * topPtWeight * lumi;
     //else weight = globalWeight * triggerWeight * puWeight * lumi;
 
-    if ( (iSample - NSamples + NSignals) > -0.01 ) weight *= isrWeight;
-
-    //if (lRelIso > 0.1) continue;
+    if (lRelIso > 0.1) continue;
     
     for (int ilep = 0; ilep < NLeps; ilep++){
       lepFlag = true;
@@ -503,16 +501,8 @@ int MakeHistos(int iSample = 0, int iSR = 6){
       
 	drlbminh[iDir]->Fill( drlbmin, weight);
 
-
 	mt2wh[iDir]->Fill( mt2w, weight);
-	njetsh[iDir]->Fill( njets, weight);
-	  
-	if      (fabs(njets - 1) < .0001) mt1h[iDir]->Fill( mt, weight);
-	else if (fabs(njets - 2) < .0001) mt2h[iDir]->Fill( mt, weight);
-	else if (fabs(njets - 3) < .0001) mt3h[iDir]->Fill( mt, weight);	
-	else if (fabs(njets - 4) < .0001) mt4h[iDir]->Fill( mt, weight);
-	else mt5h[iDir]->Fill( mt, weight);
-      
+
 	yh[iDir]->Fill( y, weight);
 	dphiminh[iDir]->Fill( dphimin, weight);
 	drlb1h[iDir]->Fill( drlb1, weight);

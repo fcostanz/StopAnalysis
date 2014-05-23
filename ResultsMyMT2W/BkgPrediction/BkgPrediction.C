@@ -725,7 +725,7 @@ int BkgPrediction(){
     tree[ilep]->Branch( "postAllBkgCorrErr", &postCorrErr[NSamples]);
 
     tree[ilep]->Branch( "srAllBkg", &sr[NSamples]);
-    tree[ilep]->Branch( "srAllBkg", &srErr[NSamples]);    
+    tree[ilep]->Branch( "srAllBkgErr", &srErr[NSamples]);    
     tree[ilep]->Branch( "srAllBkgCorr", &srCorr[NSamples]);
     tree[ilep]->Branch( "srAllBkgCorrErr", &srCorrErr[NSamples]);
 

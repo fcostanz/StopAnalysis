@@ -208,7 +208,7 @@ int CR4(){
     for ( int iSR = 0; iSR < NSR; iSR++){      
       srTree->GetEntry(iSR);
       
-      //if (metCut > 260) metCut = 250.;
+      if (metCut > 260) metCut = 250.;
       
 
       TString baseDirName = ""; baseDirName += iSR;
@@ -217,7 +217,7 @@ int CR4(){
       
       TString metDirName = "";       
       Float_t metTmp = metCut;
-      for ( int jSR = NSR-4; jSR < NSR; jSR++){
+      for ( int jSR = NSR-5; jSR < NSR; jSR++){
 	srTree->GetEntry(jSR);
 	if ( fabs(metCut - metTmp) < 0.001){
 	  metDirName += jSR;

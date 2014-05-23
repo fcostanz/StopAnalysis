@@ -68,7 +68,7 @@ void mergeFiles(){
 
   TFile *f = new TFile( "SignalSys.root","recreate");
 
-  for (int iSR = 0; iSR < 8; iSR++){
+  for (int iSR = 0; iSR < 9; iSR++){
     TString inFileName = ""; inFileName += iSR; inFileName += ".root";
     CopyFile(inFileName);
   }

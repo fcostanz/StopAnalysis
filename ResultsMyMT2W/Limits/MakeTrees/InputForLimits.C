@@ -123,8 +123,8 @@ int InputForLimits(){
   TH1::SetDefaultSumw2(true);
   if(pcp)cout<<"going to set inputs"<<endl;
 
-  Int_t NBR = 4;
-  Float_t BR[] = { 1., 0.75, 0.5, 0.25};
+  Int_t NBR = 3;
+  Float_t BR[] = { 1., 0.75, 0.5};
 
   TFile* bkgFile = new TFile( "../../BkgPrediction/BkgPrediction.root", "READ"); 
   TTree* bkgTree;
@@ -220,7 +220,7 @@ int InputForLimits(){
     outFile->mkdir(dirname);
     outBRDir = outFile->GetDirectory(dirname);
 
-    for ( int iSR = 0; iSR < 8; iSR++){
+    for ( int iSR = 0; iSR < 9; iSR++){
       bkgTree->GetEntry(iSR);      
       datah->SetBinContent( 1, obs);
       bkgh->SetBinContent( 1, bkg);
